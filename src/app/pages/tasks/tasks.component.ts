@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { NurscareService } from '../../shared/services/nuscare.service';
-import 'devextreme/data/odata/store';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  templateUrl: 'tasks.component.html'
+  templateUrl: 'tasks.component.html',
 })
 export class TasksComponent implements OnInit {
   test: any;
 
-  constructor(private NurscareService: NurscareService) {
-  }
+  constructor(private NurscareService: NurscareService) {}
 
   ngOnInit(): void {
     this.loadTodos();
@@ -25,5 +24,5 @@ export class TasksComponent implements OnInit {
         console.error('Erreur lors de la requête :', error);
       }
     );
-  }  
+  }
 }

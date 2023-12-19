@@ -1,3 +1,5 @@
+// app.module.ts
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
@@ -8,10 +10,13 @@ import { AuthService, ScreenService, AppInfoService } from './shared/services';
 import { UnauthenticatedContentModule } from './unauthenticated-content';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
+import { NurscareService } from './shared/services/nuscare.service';
+import { TasksComponent } from '../app/pages/tasks/tasks.component'; // Assurez-vous de spécifier le chemin correct
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TasksComponent, 
   ],
   imports: [
     BrowserModule,
@@ -26,12 +31,13 @@ import { HttpClientModule } from '@angular/common/http';
     LoginFormModule,
     UnauthenticatedContentModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     AuthService,
     ScreenService,
-    AppInfoService
+    AppInfoService,
+    NurscareService
   ],
   bootstrap: [AppComponent]
 })
