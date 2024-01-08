@@ -1,19 +1,32 @@
+
 export const navigation = [
   {
-    text: 'Home',
+    text: 'Accueil',
     path: '/home',
     icon: 'home'
   },
   {
-    text: 'Examples',
+    text: 'Outils',
     icon: 'folder',
     items: [
       {
         text: 'Profile',
+        icon: 'user',
         path: '/profile'
       },
       {
-        text: 'Tasks',
+        text: 'Administration',
+        icon: 'group',
+        path: '/administration'
+      },
+      {
+        text: 'Patient',
+        icon: 'card',
+        path: '/patient'
+      },
+      {
+        text: 'Tache',
+        icon: 'doc',
         path: '/tasks'
       }
     ]

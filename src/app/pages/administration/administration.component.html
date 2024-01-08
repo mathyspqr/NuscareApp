@@ -1,0 +1,41 @@
+<h2>Gestion du personnel</h2>
+
+<dx-data-grid
+  id="gridContainer"
+  [dataSource]="personnels"
+  keyExpr="id_personnel"
+  (onSelectionChanged)="onSelectionChanged($event)"
+  (onContentReady)="onContentReady($event)"
+  [showBorders]="true">
+  
+  <dxo-selection mode="single"></dxo-selection>
+  <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
+
+  <dxi-column dataField="nom_personnel" caption="Nom"></dxi-column>
+  <dxi-column dataField="prenom_personnel" caption="Prénom"></dxi-column>
+  <dxi-column dataField="email_personnel" caption="Email"></dxi-column>
+  <dxi-column dataField="adresse_personnel" caption="Adresse"></dxi-column>
+  <dxi-column dataField="date_naissance_personnel" dataType="date" caption="Date de Naissance"></dxi-column>
+  
+  <div *dxTemplate="let detailData of 'detail'">
+    <div>
+      <p>Bonjour, je suis un test.</p>
+      <p>Informations détaillées pour : {{ detailData.data.nom_personnel }} {{ detailData.data.prenom_personnel }}</p>
+      <ul>
+        <li>ID: {{ detailData.data.id_personnel }}</li>
+        <li>Email: {{ detailData.data.email_personnel }}</li>
+        <li>Adresse: {{ detailData.data.adresse_personnel }}</li>
+        <li>Date de Naissance: {{ detailData.data.date_naissance_personnel | date:'mediumDate' }}</li>
+      </ul>
+      <dx-select-box
+      [dataSource]="roles"
+      valueExpr="value"
+      displayExpr="libelle_role"
+      placeholder="Sélectionner un rôle à affecter"
+      [(value)]="detailData.data.id_role"
+      (onValueChanged)="onRoleChange(detailData.data, $event)">
+    </dx-select-box>
+    
+  </div>
+</div>
+</dx-data-grid>

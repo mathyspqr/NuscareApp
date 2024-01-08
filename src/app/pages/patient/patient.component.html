@@ -1,0 +1,31 @@
+<h2>Gestion des patients</h2>
+
+<dx-data-grid
+  id="gridContainer"
+  [dataSource]="patients"
+  keyExpr="id_patient"
+  [showBorders]="true"
+  (onRowInserting)="onRowInserting($event)"
+  (onRowUpdating)="onRowUpdating($event)"
+  (onRowRemoving)="onRowRemoving($event)">
+
+  <dxo-editing
+    mode="popup"
+    [allowUpdating]="true"
+    [allowAdding]="true"
+    [allowDeleting]="true">
+    <dxo-popup
+      title="Information sur le patient"
+      [showTitle]="true"
+      [width]="700"
+      [height]="525">
+    </dxo-popup>
+  </dxo-editing>
+
+  <dxi-column dataField="nom_patient" caption="Nom"></dxi-column>
+  <dxi-column dataField="prenom_patient" caption="Prénom"></dxi-column>
+  <dxi-column dataField="email_patient" caption="Email"></dxi-column>
+  <dxi-column dataField="adresse_patient" caption="Adresse"></dxi-column>
+  <dxi-column dataField="datenaissance_patient" dataType="date" caption="Date de Naissance"></dxi-column>
+
+</dx-data-grid>

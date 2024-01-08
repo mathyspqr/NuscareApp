@@ -18,6 +18,13 @@
       [text]="title">
     </dxi-item>
     <dxi-item
+    location="after"
+    menuItemTemplate="themeSelector">
+    <div *dxTemplate="let data of 'item'">
+      <theme-selector></theme-selector>
+    </div>
+  </dxi-item>
+    <dxi-item
       location="after"
       locateInMenu="auto"
       menuItemTemplate="menuItem">

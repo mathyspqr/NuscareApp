@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, Input, NgModule } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { DxFormModule } from 'devextreme-angular/ui/form';
 import { DxLoadIndicatorModule } from 'devextreme-angular/ui/load-indicator';
 import notify from 'devextreme/ui/notify';
-import { AuthService } from '../../services';
+import { AuthService, IUser } from '../../services';
 
 
 @Component({
@@ -15,6 +15,7 @@ import { AuthService } from '../../services';
 export class LoginFormComponent {
   loading = false;
   formData: any = {};
+
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -34,6 +35,7 @@ export class LoginFormComponent {
     this.router.navigate(['/create-account']);
   }
 }
+
 @NgModule({
   imports: [
     CommonModule,

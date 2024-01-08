@@ -7,11 +7,31 @@ import { Observable } from 'rxjs';
 })
 
 export class NurscareService {
-  private baseUrl = 'http://localhost:8080';
+  private baseUrl = '/nurscare';
 
   constructor(private http: HttpClient) {}
 
-  getTodos(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/nurscare`);
+  getUser(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/`);
+  }
+
+  getPatient(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/patient/`);
+  }
+
+  createPatient(patientData: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/createpatient`, patientData);
+  }
+
+  deletePatient(patientId: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/deletepatient/${patientId}`);
+  }  
+
+  modifiedPatient(patientId: number, patientData: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/updatepatient/${patientId}`, patientData);
+  }
+  
+  updateinfouser(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/submitform`, userData);
   }
 }

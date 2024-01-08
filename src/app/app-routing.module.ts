@@ -5,12 +5,26 @@ import { AuthGuardService } from './shared/services';
 import { HomeComponent } from './pages/home/home.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
+import { AdministrationComponent } from './pages/administration/administration.component';
+import { PatientComponent } from './pages/patient/patient.component';
 import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
+import { DxButtonModule } from 'devextreme-angular';
+import { NurscareService } from '../app/shared/services/nuscare.service'; 
 
 const routes: Routes = [
   {
     path: 'tasks',
     component: TasksComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'administration',
+    component: AdministrationComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'patient',
+    component: PatientComponent,
     canActivate: [ AuthGuardService ]
   },
   {
@@ -45,13 +59,13 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'home'
+    redirectTo: 'login-form',
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule],
-  providers: [AuthGuardService],
+  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule, DxButtonModule],
+  providers: [AuthGuardService, NurscareService],
   exports: [RouterModule],
   declarations: [
     HomeComponent,
