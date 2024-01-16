@@ -19,6 +19,14 @@ export class NurscareService {
     return this.http.get<any>(`${this.baseUrl}/patient/`);
   }
 
+  getInterventions(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/agendasinterventions/`);
+  }
+
+  getPrestations(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/agendasprestations/`);
+  }
+
   createPatient(patientData: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/createpatient`, patientData);
   }
@@ -34,4 +42,6 @@ export class NurscareService {
   updateinfouser(userData: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/submitform`, userData);
   }
+
+  
 }

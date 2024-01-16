@@ -25,6 +25,11 @@ export const navigation = [
         path: '/patient'
       },
       {
+        text: 'Agenda Prévisionnel',
+        icon: 'event',
+        path: '/agenda'
+      },
+      {
         text: 'Tache',
         icon: 'doc',
         path: '/tasks'

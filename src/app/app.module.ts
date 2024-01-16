@@ -13,10 +13,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { NurscareService } from './shared/services/nuscare.service';
 import { ThemeService } from './shared/services/theme.service';
 import { TasksComponent } from '../app/pages/tasks/tasks.component'; // Assurez-vous de spécifier le chemin correct
-import { DxDataGridModule, DxSelectBoxModule } from 'devextreme-angular';
+import { DxDataGridModule, DxSchedulerComponent, DxSelectBoxModule,DxSchedulerModule, DxContextMenuModule } from 'devextreme-angular';
 import { AdministrationComponent } from './pages/administration/administration.component';
 import { DxoDetailsModule, DxoMasterDetailModule } from 'devextreme-angular/ui/nested';
 import { PatientComponent } from './pages/patient/patient.component';
+import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendaprevisionnel.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { PatientComponent } from './pages/patient/patient.component';
     TasksComponent,
     PatientComponent,
     AdministrationComponent,
+    AgendaprevisionnelComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +44,8 @@ import { PatientComponent } from './pages/patient/patient.component';
     DxDataGridModule,
     DxoMasterDetailModule,
     DxSelectBoxModule,
+    DxSchedulerModule,
+    DxContextMenuModule,
   ],
   providers: [
     AuthService,

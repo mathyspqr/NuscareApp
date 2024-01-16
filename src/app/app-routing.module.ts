@@ -7,6 +7,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { TasksComponent } from './pages/tasks/tasks.component';
 import { AdministrationComponent } from './pages/administration/administration.component';
 import { PatientComponent } from './pages/patient/patient.component';
+import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendaprevisionnel.component';
 import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
 import { DxButtonModule } from 'devextreme-angular';
 import { NurscareService } from '../app/shared/services/nuscare.service'; 
@@ -25,6 +26,11 @@ const routes: Routes = [
   {
     path: 'patient',
     component: PatientComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'agenda',
+    component: AgendaprevisionnelComponent,
     canActivate: [ AuthGuardService ]
   },
   {

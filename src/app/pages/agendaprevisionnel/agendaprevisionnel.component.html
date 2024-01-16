@@ -1,0 +1,11 @@
+<dx-scheduler
+  timeZone="Europe/Paris"
+  [dataSource]="agendasPrevisionnels2"
+  [views]="['day', 'week', 'workWeek', 'month']"
+  currentView="day"
+  [currentDate]="currentDate"
+  [startDayHour]="9"
+  [height]="730"
+  (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+>
+</dx-scheduler>
