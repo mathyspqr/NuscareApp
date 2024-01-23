@@ -10,17 +10,22 @@
   (onRowRemoving)="onRowRemoving($event)">
 
   <dxo-editing
-    mode="popup"
-    [allowUpdating]="true"
-    [allowAdding]="true"
-    [allowDeleting]="true">
-    <dxo-popup
+  mode="popup"
+  [allowUpdating]="true"
+  [allowAdding]="true"
+  [allowDeleting]="true"
+  [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }">
+  <dx-popup
+      [width]="'80%'"
+      [height]="'80%'"
+      [hideOnOutsideClick]="true"
+      [showCloseButton]="true"
       title="Information sur le patient"
       [showTitle]="true"
-      [width]="700"
-      [height]="525">
-    </dxo-popup>
-  </dxo-editing>
+  >
+  </dx-popup>
+</dxo-editing>
+
 
   <dxi-column dataField="nom_patient" caption="Nom"></dxi-column>
   <dxi-column dataField="prenom_patient" caption="Prénom"></dxi-column>

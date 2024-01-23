@@ -30,8 +30,7 @@ export class SideNavigationMenuComponent
 {
   @ViewChild(DxTreeViewComponent, { static: true })
   menu!: DxTreeViewComponent;
-  idRole! : number
-
+  idRole!: any;
 
   @Input()
   user!: IUser | null;
@@ -58,33 +57,31 @@ export class SideNavigationMenuComponent
   get items() {
     if (!this._items && this.idRole) {
       console.log('Current User Role ID:', this.idRole);
-  
-      this._items = navigation.map((item) => {
-        if (item.text === 'Outils') {
-          // Filtrer uniquement les sous-menus de 'Outils'
-          return {
-            ...item,
-            items: item.items!.filter(subItem => {
-              // Cacher 'Administration' si idRole n'est pas 2
-              return !(subItem.text === 'Administration' && this.idRole !== 2);
-            })
-          };
-        } else {
-          // Retourner les autres éléments du menu principal sans modification
-          return item;
-        }
-      }).map((item) => {
-        // Ajout de la logique de traitement du chemin, si nécessaire
-        if (item.path && !/^\//.test(item.path)) {
-          item.path = `/${item.path}`;
-        }
-        return { ...item, expanded: !this._compactMode };
-      });
+
+      this._items = navigation
+        .map((item) => {
+          if (item.text === 'Outils') {
+            return {
+              ...item,
+              items: item.items!.filter((subItem) => {
+                return !(
+                  subItem.text === 'Administration' && this.idRole !== 2
+                );
+              }),
+            };
+          } else {
+            return item;
+          }
+        })
+        .map((item) => {
+          if (item.path && !/^\//.test(item.path)) {
+            item.path = `/${item.path}`;
+          }
+          return { ...item, expanded: !this._compactMode };
+        });
     }
     return this._items;
   }
-  
-  
 
   private _compactMode = false;
   @Input()
@@ -114,18 +111,7 @@ export class SideNavigationMenuComponent
     const userId = this.authService._user?.id_personnel;
     console.log('UserID in nav', userId);
 
-    if (userId !== undefined) {
-      this.authService.getUserInfo(userId).subscribe({
-        next: (userResponse) => {
-          console.log('User Response:', userResponse);
-          this.idRole = userResponse.data.id_role;
-          console.log('User Role ID:', this.idRole);
-        },
-        error: (error) => {
-          console.error('Error fetching user data:', error);
-        },
-      });
-    }
+    this.idRole = this.authService._user?.role_personnel;
   }
 
   onItemClick(event: DxTreeViewTypes.ItemClickEvent) {

@@ -1,4 +1,187 @@
+
+<br>
+<dx-button
+  type="default"
+  (onClick)="showPopupIntervention($event)"
+  icon="/assets/icons/intervention.png"
+  text="Intervention médicale"
+  *ngIf="interventionbool"
+  style="margin-right: 10px; margin-left: 10px;"
+></dx-button>
+
+<dx-button
+  type="default"
+  (onClick)="showPopupPrestation($event)"
+  icon="/assets/icons/prestation.png"
+  text="Prestation médicale"
+  *ngIf="interventionbool"
+></dx-button>
+
+<br>
+<br>
+
+<dx-popup
+  [width]="'80%'"
+  [height]="'80%'"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  [(visible)]="popupVisiblePrestation"
+  title="Créer une nouvelle prestation"
+>
+  <div *dxTemplate="let data of 'content'">
+    <dx-form [formData]="prestationfrom">
+      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+
+        <dxi-item
+          dataField="libelle_prestation"
+          editorType="dxTextBox"
+          [editorOptions]="{
+            placeholder:'Intitulé de la prestation',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="date_prestation"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            placeholder:'Date et heure de la prestation',
+            width: '100%',
+            type: 'datetime',
+            displayFormat: 'yyyy-MM-dd HH:mm',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+        dataField="id_categorie"
+        editorType="dxSelectBox"
+        [editorOptions]="{
+          dataSource: categories,
+          valueExpr: 'id_categorie',
+          displayExpr: 'libelle_categorie',
+          placeholder: 'Sélectionner une catégorie',
+          width: '100%',
+          searchEnabled: true,
+        }"
+      ></dxi-item>
+
+      <dxi-item
+      dataField="id_intervention"
+      editorType="dxSelectBox"
+      [editorOptions]="{
+        dataSource: agendasPrevisionnels,
+        valueExpr: 'id_intervention',
+        displayExpr: 'libelle_intervention',
+        placeholder: 'Sélectionner une intervention',
+        width: '100%',
+        searchEnabled: true,
+      }"
+    ></dxi-item>
+
+    <dxi-item
+  dataField="prix_prestation"
+  editorType="dxNumberBox"
+  [editorOptions]="{
+    placeholder:'Prix de la prestation',
+    width: '100%',
+    showSpinButtons: true,
+    min: 0,
+    format: '#,##0.00€',
+  }"
+  ></dxi-item>
+
+
+    
+      
+      </dxi-item>
+    </dx-form>
+
+    <div style="text-align: center; margin-top: 20px">
+      <dx-button icon="floppy" (click)="onSubmitPrestation(prestationfrom)"></dx-button>
+    </div>
+
+  </div>
+</dx-popup>
+
+<dx-popup
+  [width]="'80%'"
+  [height]="'80%'"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  [(visible)]="popupVisibleIntervention"
+  title="Créer une nouvelle intervention"
+>
+  <div *dxTemplate="let data of 'content'">
+    <dx-form [formData]="interventionForm">
+      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+
+        <dxi-item
+          dataField="text"
+          editorType="dxTextBox"
+          [editorOptions]="{
+            placeholder:'Intitulé de lintervention',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="startDate"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            placeholder:'Début de lintervention',
+            width: '100%',
+            type: 'datetime',
+            displayFormat: 'yyyy-MM-dd HH:mm',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="endDate"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            placeholder:'Fin de lintervention',
+            width: '100%',
+            type: 'datetime',
+            displayFormat: 'yyyy-MM-dd HH:mm',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+        dataField="id_patient"
+        editorType="dxSelectBox"
+        [editorOptions]="{
+          dataSource: patients,
+          valueExpr: 'id_patient',
+          displayExpr: 'nomPrenom',
+          placeholder: 'Sélectionner un patient',
+          width: '100%',
+          searchEnabled: true,
+        }"
+      ></dxi-item>
+
+      <dxi-item
+      dataField="id_personnel"
+      editorType="dxSelectBox"
+      [editorOptions]="{
+        dataSource: soignants,
+        valueExpr: 'id_personnel',
+        displayExpr: 'nomPrenom',
+        placeholder: 'Sélectionner un soignant',
+        width: '100%',
+        searchEnabled: true,
+      }"
+    ></dxi-item>
+      
+      </dxi-item>
+    </dx-form>
+
+    <div style="text-align: center; margin-top: 20px">
+      <dx-button icon="floppy" (click)="onSubmit($event)"></dx-button>
+    </div>
+
+  </div>
+</dx-popup>
+
 <dx-scheduler
+  *ngIf="interventionbool"
   timeZone="Europe/Paris"
   [dataSource]="agendasPrevisionnels2"
   [views]="['day', 'week', 'workWeek', 'month']"
@@ -7,5 +190,68 @@
   [startDayHour]="9"
   [height]="730"
   (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+  (onAppointmentDeleted)="onAppointmentDeleted($event)"
+  (onAppointmentFormHiding)="onDeleteButtonClick($event)"
 >
 </dx-scheduler>
+
+
+<dx-scheduler
+  *ngIf="!interventionbool"
+  timeZone="Europe/Paris"
+  [dataSource]="interventionfiltrermap"
+  [views]="['day', 'week', 'workWeek', 'month']"
+  currentView="day"
+  [currentDate]="currentDate"
+  [startDayHour]="9"
+  [height]="730"
+  (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+>
+</dx-scheduler>
+<br>
+
+<dx-button
+  type="default"
+  (onClick)="CalculItineraire($event)"
+  icon="/assets/icons/loc.png"
+  text="Itinéraire d'aujourd'hui"
+  (onClick)="showPopupItineraire($event)"
+  style="margin-right: 10px; margin-left: 10px;"
+></dx-button>
+
+
+<dx-popup
+  [width]="'80%'"
+  [height]="'80%'"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  [(visible)]="popupVisibleitineraire"
+  title="Carte des interventions"
+>
+
+<dx-map
+  provider="google"
+  [apiKey]="'AIzaSyC6aoXl4XsKf8pHYAXD-SGcxZVO0D7R33c'"
+  [zoom]="14"
+  [height]="440"
+  width="100%"
+  [controls]="true"
+  [markers]="markers"
+  [routes]="[route]"
+  routeColorField="color"
+  routeModeField="mode"
+>
+</dx-map>
+<br>
+
+<dx-data-grid
+  id="gridContainer"
+  [dataSource]="itinerairemap"
+  [showBorders]="true"
+>
+</dx-data-grid>
+
+
+</dx-popup>
+
+<br/>

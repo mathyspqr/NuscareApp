@@ -11,6 +11,7 @@ export interface IUser {
   adresse_personnel?: string;
   date_naissance_personnel?: Date;
   password?: string;
+  role_personnel?:number;
 }
 
 const defaultPath = '/home';
@@ -44,6 +45,7 @@ export class AuthService {
     });
 
     const data = await response.json();
+    console.log('User logged in before:', data);
 
     if (response.status === 200 && data.user) {
       this._user = {
@@ -53,6 +55,7 @@ export class AuthService {
         prenom_personnel: data.user.prenom_personnel,
         adresse_personnel: data.user.adresse_personnel,
         date_naissance_personnel: data.user.date_naissance_personnel,
+        role_personnel : data.user.role_personnel
       };
       console.log('User logged in:', this._user);
 
@@ -78,7 +81,6 @@ export class AuthService {
     };
   }
 }
-
 
 
   getUserInfo(idPersonnel: number): Observable<any> {

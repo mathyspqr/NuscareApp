@@ -12,8 +12,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NurscareService } from './shared/services/nuscare.service';
 import { ThemeService } from './shared/services/theme.service';
-import { TasksComponent } from '../app/pages/tasks/tasks.component'; // Assurez-vous de spécifier le chemin correct
-import { DxDataGridModule, DxSchedulerComponent, DxSelectBoxModule,DxSchedulerModule, DxContextMenuModule } from 'devextreme-angular';
+import { TasksComponent } from '../app/pages/tasks/tasks.component';
+import { DxDataGridModule, DxSchedulerComponent, DxSelectBoxModule,DxSchedulerModule, DxContextMenuModule, DxButtonModule, DxPopupModule, DxFormModule, DxBoxModule, DxMapModule } from 'devextreme-angular';
 import { AdministrationComponent } from './pages/administration/administration.component';
 import { DxoDetailsModule, DxoMasterDetailModule } from 'devextreme-angular/ui/nested';
 import { PatientComponent } from './pages/patient/patient.component';
@@ -46,13 +46,18 @@ import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendapr
     DxSelectBoxModule,
     DxSchedulerModule,
     DxContextMenuModule,
+    DxButtonModule,
+    DxPopupModule,
+    DxFormModule,
+    DxBoxModule,
+    DxMapModule,
   ],
   providers: [
     AuthService,
     ScreenService,
     AppInfoService,
     NurscareService,
-    ThemeService
+    ThemeService,
   ],
   bootstrap: [AppComponent]
 })
