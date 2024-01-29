@@ -33,6 +33,10 @@ export class NurscareService {
     return this.http.get<any>(`${this.baseUrl}/agendasprestations/`);
   }
 
+  getPrestationsall(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/agendasprestationsall/`);
+  }
+
   addIntervention(interventionForm: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/addintervention`, interventionForm).pipe(
     );
@@ -70,6 +74,12 @@ export class NurscareService {
   getItineraire(adresseInfo: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/calculate-routes`, adresseInfo);
   }
+
+  updateIntervention(interventionInfo: any): Observable<any> {
+    const idIntervention = interventionInfo.id_intervention;
+    return this.http.put<any>(`${this.baseUrl}/updateintervention/${idIntervention}`, interventionInfo);
+  }
+  
   
   geocodeAddress(address: string): Observable<any> {
     const encodedAddress = encodeURIComponent(address);

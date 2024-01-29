@@ -1,105 +1,102 @@
+<br />
 
-<br>
+<dx-button
+  type="default"
+  (onClick)="showPopupEditIntervention($event)"
+  icon="/assets/icons/intervention.png"
+  text="Editer mes interventions"
+  style="margin-right: 10px; margin-left: 10px"
+></dx-button>
+
+<dx-button
+  type="default"
+  (onClick)="showPopupEditInterventionall($event)"
+  icon="/assets/icons/intervention.png"
+  text="Editer les interventions"
+  style="margin-right: 10px; margin-left: 10px"
+  *ngIf="interventionbool"
+></dx-button>
+
 <dx-button
   type="default"
   (onClick)="showPopupIntervention($event)"
   icon="/assets/icons/intervention.png"
-  text="Intervention médicale"
+  text="Intervention & Prestation médicale"
   *ngIf="interventionbool"
-  style="margin-right: 10px; margin-left: 10px;"
+  style="margin-right: 10px; margin-left: 10px"
 ></dx-button>
 
-<dx-button
-  type="default"
-  (onClick)="showPopupPrestation($event)"
-  icon="/assets/icons/prestation.png"
-  text="Prestation médicale"
-  *ngIf="interventionbool"
-></dx-button>
-
-<br>
-<br>
+<br />
+<br />
 
 <dx-popup
   [width]="'80%'"
   [height]="'80%'"
   [hideOnOutsideClick]="true"
   [showCloseButton]="true"
-  [(visible)]="popupVisiblePrestation"
-  title="Créer une nouvelle prestation"
+  [(visible)]="popupVisibleEditIntervention"
+  title="Editer mes interventions"
 >
-  <div *dxTemplate="let data of 'content'">
-    <dx-form [formData]="prestationfrom">
-      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+<h2>Edition des interventions</h2>
 
-        <dxi-item
-          dataField="libelle_prestation"
-          editorType="dxTextBox"
-          [editorOptions]="{
-            placeholder:'Intitulé de la prestation',
-          }"
-        ></dxi-item>
+<dx-data-grid
+  id="gridContainer"
+  [dataSource]="interventionfiltrermapday"
+  keyExpr="id_intervention"
+  [showBorders]="true"
+  (onRowUpdating)="onRowUpdating($event)">
 
-        <dxi-item
-          dataField="date_prestation"
-          editorType="dxDateBox"
-          [editorOptions]="{
-            placeholder:'Date et heure de la prestation',
-            width: '100%',
-            type: 'datetime',
-            displayFormat: 'yyyy-MM-dd HH:mm',
-          }"
-        ></dxi-item>
+  <dxo-editing
+  mode="popup"
+  [allowUpdating]="true"
+  [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }">
+  <dx-popup
+      [width]="'80%'"
+      [height]="'80%'"
+      [hideOnOutsideClick]="true"
+      [showCloseButton]="true"
+      [showTitle]="true"
+  >
+  </dx-popup>
+</dxo-editing>
 
-        <dxi-item
-        dataField="id_categorie"
-        editorType="dxSelectBox"
-        [editorOptions]="{
-          dataSource: categories,
-          valueExpr: 'id_categorie',
-          displayExpr: 'libelle_categorie',
-          placeholder: 'Sélectionner une catégorie',
-          width: '100%',
-          searchEnabled: true,
-        }"
-      ></dxi-item>
+</dx-data-grid>
 
-      <dxi-item
-      dataField="id_intervention"
-      editorType="dxSelectBox"
-      [editorOptions]="{
-        dataSource: agendasPrevisionnels,
-        valueExpr: 'id_intervention',
-        displayExpr: 'libelle_intervention',
-        placeholder: 'Sélectionner une intervention',
-        width: '100%',
-        searchEnabled: true,
-      }"
-    ></dxi-item>
+</dx-popup>
 
-    <dxi-item
-  dataField="prix_prestation"
-  editorType="dxNumberBox"
-  [editorOptions]="{
-    placeholder:'Prix de la prestation',
-    width: '100%',
-    showSpinButtons: true,
-    min: 0,
-    format: '#,##0.00€',
-  }"
-  ></dxi-item>
+<dx-popup
+  [width]="'80%'"
+  [height]="'80%'"
+  [hideOnOutsideClick]="true"
+  [showCloseButton]="true"
+  [(visible)]="popupVisibleEditInterventionAll"
+  title="Editer les interventions"
+>
+<h2>Edition des interventions</h2>
 
+<dx-data-grid
+  id="gridContainer"
+  [dataSource]="agendasPrevisionnels2"
+  keyExpr="id_intervention"
+  [showBorders]="true"
+  (onRowUpdating)="onRowUpdating2($event)">
 
-    
-      
-      </dxi-item>
-    </dx-form>
+  <dxo-editing
+  mode="popup"
+  [allowUpdating]="true"
+  [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }">
+  <dx-popup
+      [width]="'80%'"
+      [height]="'80%'"
+      [hideOnOutsideClick]="true"
+      [showCloseButton]="true"
+      [showTitle]="true"
+  >
+  </dx-popup>
+</dxo-editing>
 
-    <div style="text-align: center; margin-top: 20px">
-      <dx-button icon="floppy" (click)="onSubmitPrestation(prestationfrom)"></dx-button>
-    </div>
+</dx-data-grid>
 
-  </div>
 </dx-popup>
 
 <dx-popup
@@ -113,7 +110,6 @@
   <div *dxTemplate="let data of 'content'">
     <dx-form [formData]="interventionForm">
       <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
-
         <dxi-item
           dataField="text"
           editorType="dxTextBox"
@@ -145,9 +141,9 @@
         ></dxi-item>
 
         <dxi-item
-        dataField="id_patient"
-        editorType="dxSelectBox"
-        [editorOptions]="{
+          dataField="id_patient"
+          editorType="dxSelectBox"
+          [editorOptions]="{
           dataSource: patients,
           valueExpr: 'id_patient',
           displayExpr: 'nomPrenom',
@@ -155,20 +151,37 @@
           width: '100%',
           searchEnabled: true,
         }"
+        ></dxi-item>
+
+        <dxi-item
+        dataField="id_personnel"
+        editorType="dxSelectBox"
+        [editorOptions]="{
+      dataSource: soignants,
+      valueExpr: 'id_personnel',
+      displayExpr: 'nomPrenom',
+      placeholder: 'Sélectionner un soignant',
+      width: '100%',
+      searchEnabled: true,
+    }"
       ></dxi-item>
 
-      <dxi-item
-      dataField="id_personnel"
-      editorType="dxSelectBox"
-      [editorOptions]="{
-        dataSource: soignants,
-        valueExpr: 'id_personnel',
-        displayExpr: 'nomPrenom',
-        placeholder: 'Sélectionner un soignant',
-        width: '100%',
-        searchEnabled: true,
-      }"
-    ></dxi-item>
+        <dxi-item
+        dataField="id_prestations"
+        editorType="dxTagBox"
+        [editorOptions]="{
+          dataSource: prestationsall,
+          valueExpr: 'id_prestation',
+          displayExpr: 'libelle_prestation',
+          placeholder: 'Sélectionner des prestations',
+          width: '100%',
+          searchEnabled: true,
+          showSelectionControls: true,
+          multiline: true,
+        }"
+      ></dxi-item>
+      
+      
       
       </dxi-item>
     </dx-form>
@@ -176,7 +189,6 @@
     <div style="text-align: center; margin-top: 20px">
       <dx-button icon="floppy" (click)="onSubmit($event)"></dx-button>
     </div>
-
   </div>
 </dx-popup>
 
@@ -193,6 +205,7 @@
   (onAppointmentDeleted)="onAppointmentDeleted($event)"
   (onAppointmentFormHiding)="onDeleteButtonClick($event)"
 >
+<dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
 
 
@@ -207,8 +220,11 @@
   [height]="730"
   (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
 >
+  <dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
-<br>
+
+
+<br/>
 
 <dx-button
   type="default"
@@ -216,9 +232,8 @@
   icon="/assets/icons/loc.png"
   text="Itinéraire d'aujourd'hui"
   (onClick)="showPopupItineraire($event)"
-  style="margin-right: 10px; margin-left: 10px;"
+  style="margin-right: 10px; margin-left: 10px"
 ></dx-button>
-
 
 <dx-popup
   [width]="'80%'"
@@ -228,30 +243,27 @@
   [(visible)]="popupVisibleitineraire"
   title="Carte des interventions"
 >
+  <dx-map
+    provider="google"
+    [apiKey]="'AIzaSyC6aoXl4XsKf8pHYAXD-SGcxZVO0D7R33c'"
+    [zoom]="14"
+    [height]="440"
+    width="100%"
+    [controls]="true"
+    [markers]="markers"
+    [routes]="[route]"
+    routeColorField="color"
+    routeModeField="mode"
+  >
+  </dx-map>
+  <br />
 
-<dx-map
-  provider="google"
-  [apiKey]="'AIzaSyC6aoXl4XsKf8pHYAXD-SGcxZVO0D7R33c'"
-  [zoom]="14"
-  [height]="440"
-  width="100%"
-  [controls]="true"
-  [markers]="markers"
-  [routes]="[route]"
-  routeColorField="color"
-  routeModeField="mode"
->
-</dx-map>
-<br>
-
-<dx-data-grid
-  id="gridContainer"
-  [dataSource]="itinerairemap"
-  [showBorders]="true"
->
-</dx-data-grid>
-
-
+  <dx-data-grid
+    id="gridContainer"
+    [dataSource]="itinerairemap"
+    [showBorders]="true"
+  >
+  </dx-data-grid>
 </dx-popup>
 
-<br/>
+<br />
