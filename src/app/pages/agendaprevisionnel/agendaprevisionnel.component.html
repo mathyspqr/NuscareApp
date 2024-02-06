@@ -12,6 +12,7 @@
 <dx-button
   type="default"
   (onClick)="showPopupEditInterventionall($event)"
+  (onClick)="showPopupEditInterventionall($event)"
   icon="/assets/icons/intervention.png"
   text="Editer les interventions"
   style="margin-right: 10px; margin-left: 10px"
@@ -23,10 +24,15 @@
   (onClick)="showPopupIntervention($event)"
   icon="/assets/icons/intervention.png"
   text="Intervention & Prestation médicale"
+  (onClick)="showPopupIntervention($event)"
+  icon="/assets/icons/intervention.png"
+  text="Intervention & Prestation médicale"
   *ngIf="interventionbool"
   style="margin-right: 10px; margin-left: 10px"
 ></dx-button>
 
+<br />
+<br />
 <br />
 <br />
 
@@ -293,6 +299,8 @@
         <dxi-item
           dataField="id_patient"
           editorType="dxSelectBox"
+          dataField="id_patient"
+          editorType="dxSelectBox"
           [editorOptions]="{
           dataSource: patients,
           valueExpr: 'id_patient',
@@ -300,13 +308,12 @@
           placeholder: 'Sélectionner un patient',
           width: '100%',
           searchEnabled: true,
-        }"
-        ></dxi-item>
+        }"></dxi-item>
 
         <dxi-item
-          dataField="id_personnel"
-          editorType="dxSelectBox"
-          [editorOptions]="{
+        dataField="id_personnel"
+        editorType="dxSelectBox"
+        [editorOptions]="{
       dataSource: soignants,
       valueExpr: 'id_personnel',
       displayExpr: 'nomPrenom',
@@ -314,12 +321,12 @@
       width: '100%',
       searchEnabled: true,
     }"
-        ></dxi-item>
+      ></dxi-item>
 
         <dxi-item
-          dataField="id_prestations"
-          editorType="dxTagBox"
-          [editorOptions]="{
+        dataField="id_prestations"
+        editorType="dxTagBox"
+        [editorOptions]="{
           dataSource: prestationsall,
           valueExpr: 'id_prestation',
           displayExpr: 'libelle_prestation',
@@ -329,7 +336,10 @@
           showSelectionControls: true,
           multiline: true,
         }"
-        ></dxi-item>
+      ></dxi-item>
+      
+      
+      
       </dxi-item>
     </dx-form>
 
@@ -352,7 +362,6 @@
   (onAppointmentDeleted)="onAppointmentDeleted($event)"
   (onAppointmentFormHiding)="onDeleteButtonClick($event)"
 >
-  <dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
 
 <dx-scheduler
@@ -368,8 +377,7 @@
 >
   <dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
-
-<br />
+<br>
 
 <dx-button
   type="default"

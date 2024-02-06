@@ -6,9 +6,9 @@ import {
 } from '../../shared/services/auth.service';
 import { EMPTY, Subscription, catchError, forkJoin } from 'rxjs';
 import notify from 'devextreme/ui/notify';
+import { DxPopupComponent } from 'devextreme-angular';
 import { TasksComponent } from '../tasks/tasks.component';
 import { dxSchedulerAppointment } from 'devextreme/ui/scheduler';
-import { DxPopupComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'app-agendaprevisionnel',
@@ -20,8 +20,8 @@ export class AgendaprevisionnelComponent implements OnInit {
   agendasPrevisionnels2: any[] = [];
   prestations: any[] = [];
   prestationsall: any[] = [];
-  getMovieById: any;
 
+  getMovieById: any;
   idsIntervention: any[] = [];
   idsIntervention2: any[] = [];
 
@@ -29,9 +29,12 @@ export class AgendaprevisionnelComponent implements OnInit {
 
   id_prestationsupp!: number;
 
+
   prestationTokenDeleted: EventEmitter<void> = new EventEmitter<void>();
 
   adresseInfo: any[] = [];
+
+
 
   constructor(
     private nurscareService: NurscareService,
@@ -41,6 +44,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   interventionfiltrer: any[] = [];
   interventionfiltrermap: any[] = [];
   interventionfiltrermapday: any[] = [];
+
   patients: any[] = [];
   soignants: any[] = [];
   idsInterventionArray: any = [];
@@ -48,6 +52,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   categories = [
     { id_categorie: 1, libelle_categorie: 'Actes de soin' },
     { id_categorie: 2, libelle_categorie: 'Actes d’analyse' },
+    { id_categorie: 3, libelle_categorie: 'Actes préventifs' },
     { id_categorie: 3, libelle_categorie: 'Actes préventifs' },
   ];
 
@@ -234,6 +239,15 @@ export class AgendaprevisionnelComponent implements OnInit {
         })
       )
       .subscribe((res: any) => {
+    this.subscription = this.nurscareService
+      .getPatient()
+      .pipe(
+        catchError((error: any) => {
+          console.error('Something happened', error);
+          return EMPTY;
+        })
+      )
+      .subscribe((res: any) => {
         this.patients = res.map((patient: any) => ({
           id_patient: patient.id_patient,
           nom: patient.nom_patient,
@@ -241,6 +255,7 @@ export class AgendaprevisionnelComponent implements OnInit {
           nomPrenom: `${patient.nom_patient} ${patient.prenom_patient}`,
         }));
         console.log('LoadPatient :', this.patients);
+      });
       });
   }
 
@@ -254,23 +269,36 @@ export class AgendaprevisionnelComponent implements OnInit {
         })
       )
       .subscribe((res: any) => {
+    this.subscription = this.nurscareService
+      .getUser()
+      .pipe(
+        catchError((error: any) => {
+          console.error('Something happened', error);
+          return EMPTY;
+        })
+      )
+      .subscribe((res: any) => {
         const filteredUsers = res.filter((user: any) => user.id_role === 4);
+
 
         this.soignants = filteredUsers.map((user: any) => ({
           id_personnel: user.id_personnel,
           nomPrenom: `${user.prenom_personnel} ${user.nom_personnel}`,
         }));
 
+
         console.log('LoadUser :', this.soignants);
       });
-  }
+  })}
 
   fetchInterventions(idPersonnel: string): void {
     this.nurscareService.getInterventionsSoignant(idPersonnel).subscribe(
+    
       (data) => {
         console.log(data);
         this.interventionfiltrer = data.agendasInterventions;
         console.log('INTERVENTION POUR LE SOIGNANT', this.interventionfiltrer);
+
 
         this.interventionfiltrermap = this.interventionfiltrer.map((item) => {
           return {
@@ -293,8 +321,10 @@ export class AgendaprevisionnelComponent implements OnInit {
       (result) => {
         console.log('Résultat de la requête côté client:', result);
 
+
         if (result && result.agendasInterventions) {
           this.agendasPrevisionnels = result.agendasInterventions;
+
 
           this.agendasPrevisionnels2 = this.agendasPrevisionnels.map((item) => {
             return {
@@ -345,6 +375,7 @@ export class AgendaprevisionnelComponent implements OnInit {
       }
     );
   }
+
 
   onAppointmentFormOpening(e: any): void {
     const idInterventionSelectionnee = e.appointmentData.id_intervention;
@@ -497,8 +528,13 @@ export class AgendaprevisionnelComponent implements OnInit {
         `items[0].items[${nomTextBoxIndex}].editorOptions.value`,
         rowData?.nom_patient || ''
       );
+      e.form.option(
+        `items[0].items[${nomTextBoxIndex}].editorOptions.value`,
+        rowData?.nom_patient || ''
+      );
     }
 
+   
     const prenomTextBoxIndex = e.form
       .option('items')[0]
       .items.findIndex((item: any) => item.dataField === 'prenomPatient');
@@ -511,8 +547,11 @@ export class AgendaprevisionnelComponent implements OnInit {
         `items[0].items[${prenomTextBoxIndex}].editorOptions.value`,
         rowData?.prenom_patient || ''
       );
+      e.form.option(
+        `items[0].items[${prenomTextBoxIndex}].editorOptions.value`,
+        rowData?.prenom_patient || ''
+      );
     }
-
     const adresseTextBoxIndex = e.form
       .option('items')[0]
       .items.findIndex((item: any) => item.dataField === 'adressePatient');
@@ -521,6 +560,10 @@ export class AgendaprevisionnelComponent implements OnInit {
       show
     );
     if (show) {
+      e.form.option(
+        `items[0].items[${adresseTextBoxIndex}].editorOptions.value`,
+        rowData?.adresse_patient || ''
+      );
       e.form.option(
         `items[0].items[${adresseTextBoxIndex}].editorOptions.value`,
         rowData?.adresse_patient || ''
@@ -591,12 +634,13 @@ export class AgendaprevisionnelComponent implements OnInit {
     this.popupVisibleitineraire = true;
   }
 
+
   CalculItineraire(e: any) {
     let interventionpatientconcerne = this.interventionfiltrer;
     console.log('InterventionAdresse', interventionpatientconcerne);
-
     const today = new Date().toLocaleDateString();
     console.log('Date now', today);
+
 
     let filteredInterventions = interventionpatientconcerne.filter(
       (intervention) => {
@@ -607,6 +651,7 @@ export class AgendaprevisionnelComponent implements OnInit {
       }
     );
 
+   
     console.log('Filtered Interventions for Today', filteredInterventions);
 
     if (filteredInterventions.length < 2) {
@@ -625,12 +670,10 @@ export class AgendaprevisionnelComponent implements OnInit {
           patientsadresse.includes(user.id_patient)
         );
         console.log('Info Patients', filteredUsers);
-
         let adresseInfo = filteredUsers.map(
           (user: any) => user.adresse_patient
         );
         console.log('Info Patients adresse', adresseInfo);
-
         let randomStartingPoint = this.generateRandomParisAddress();
 
         this.nurscareService
@@ -658,6 +701,7 @@ export class AgendaprevisionnelComponent implements OnInit {
     );
   }
 
+
   generateRandomParisAddress(): string {
     const parisAddresses = [
       '1 Rue de Rivoli, 75001 Paris',
@@ -677,6 +721,7 @@ export class AgendaprevisionnelComponent implements OnInit {
       location: { lat: 0, lng: 0 },
     },
   ];
+
 
   route = {
     weight: 6,
@@ -702,19 +747,29 @@ export class AgendaprevisionnelComponent implements OnInit {
           .filter((result) => result.results && result.results.length > 0)
           .map((result) => result.results[0].geometry.location);
 
+       
         this.markers = this.geocodeResult.map((coordinates) => ({
           location: coordinates,
         }));
 
+      
         const formattedLocations = this.geocodeResult.map((coordinates) => ({
           lat: coordinates.lat,
           lng: coordinates.lng,
         }));
 
         this.route.locations = formattedLocations;
+        this.route.locations = formattedLocations;
 
         const routeColor = this.route.color;
 
+        this.route = {
+          weight: 6,
+          color: routeColor,
+          opacity: 0.5,
+          mode: '',
+          locations: formattedLocations,
+        };
         this.route = {
           weight: 6,
           color: routeColor,

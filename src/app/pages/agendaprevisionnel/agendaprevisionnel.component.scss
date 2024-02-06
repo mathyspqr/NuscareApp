@@ -1,0 +1,23 @@
+@import '~@fortawesome/fontawesome-free/css/all.css';
+
+
+.edit-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px; /* Ajustez la largeur selon vos besoins */
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
