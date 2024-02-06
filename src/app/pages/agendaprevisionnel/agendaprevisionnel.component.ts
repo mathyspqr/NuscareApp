@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { NurscareService } from '../../shared/services/nuscare.service';
 import {
   AuthGuardService,
@@ -8,6 +8,7 @@ import { EMPTY, Subscription, catchError, forkJoin } from 'rxjs';
 import notify from 'devextreme/ui/notify';
 import { TasksComponent } from '../tasks/tasks.component';
 import { dxSchedulerAppointment } from 'devextreme/ui/scheduler';
+import { DxPopupComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'app-agendaprevisionnel',
@@ -20,6 +21,9 @@ export class AgendaprevisionnelComponent implements OnInit {
   prestations: any[] = [];
   prestationsall: any[] = [];
   getMovieById: any;
+
+  idsIntervention: any[] = [];
+  idsIntervention2: any[] = [];
 
   private subscription!: Subscription;
 
@@ -39,6 +43,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   interventionfiltrermapday: any[] = [];
   patients: any[] = [];
   soignants: any[] = [];
+  idsInterventionArray: any = [];
 
   categories = [
     { id_categorie: 1, libelle_categorie: 'Actes de soin' },
@@ -53,12 +58,15 @@ export class AgendaprevisionnelComponent implements OnInit {
   popupVisibleEditInterventionAll = false;
   popupVisiblePrestation = false;
   popupVisibleitineraire = false;
+  popupVisibleAddPrestation = false;
+  popupVisibleAddPrestationAll = false;
 
   currentDate: Date = new Date();
   user: any;
 
   itinerairemap: any[] = [];
   geocodeResult: any[] = [];
+  prestationsFiltrees: any[] = [];
 
   interventionForm: any = {
     text: '',
@@ -66,6 +74,18 @@ export class AgendaprevisionnelComponent implements OnInit {
     endDate: null,
     id_personnel: '',
     id_prestation: [],
+  };
+
+  addPrest: any = {
+    id_intervention: '',
+    id_prestations: [],
+    id_personnel: '',
+  };
+
+  addPrestAll: any = {
+    id_intervention: '',
+    id_prestations: [],
+    id_personnel: '',
   };
 
   ngOnInit(): void {
@@ -112,24 +132,96 @@ export class AgendaprevisionnelComponent implements OnInit {
       .slice(0, 19)
       .replace('T', ' ');
 
-    console.log('Extended Form Data:', formData);
-    this.popupVisibleIntervention = false;
+    // Assurez-vous que id_patient n'est pas nul
+    if (formData.id_patient !== null && formData.id_patient !== undefined) {
+      console.log('Extended Form Data:', formData);
+      this.popupVisibleIntervention = false;
 
-    this.nurscareService.addIntervention(formData).subscribe(
-      (response) => {
-        console.log('Intervention added successfully', response);
-        this.AgendaInterventions();
-        this.AgendaPrestations();
-        this.fetchInterventions(this.user.id_personnel);
-        this.LoadPatient();
-        this.LoadUser();
-        this.filtrerInterventionsPourAujourdhui()
-        this.interventionForm = [];
-      },
-      (error) => {
-        console.error('Error adding intervention', error);
-      }
-    );
+      this.nurscareService.addIntervention(formData).subscribe(
+        (response) => {
+          console.log('Intervention added successfully', response);
+          this.AgendaInterventions();
+          this.AgendaPrestations();
+          this.fetchInterventions(this.user.id_personnel);
+          this.LoadPatient();
+          this.LoadUser();
+          this.filtrerInterventionsPourAujourdhui();
+          this.resetForm();
+        },
+        (error) => {
+          console.error('Error adding intervention', error);
+        }
+      );
+    } else {
+      console.error('id_patient is null or undefined. Cannot submit the form.');
+    }
+  }
+
+  onSubmitNewPrest(event: any): void {
+    const formData = this.addPrest;
+    this.addPrest.id_intervention = formData.id_intervention.id_intervention;
+    formData.id_personnel = this.user.id_personnel;
+
+    console.log('Submitting formData:', formData);
+
+    this.nurscareService
+      .addPrestationIntoExistentIntervention(
+        this.addPrest.id_intervention,
+        formData
+      )
+      .subscribe(
+        (response) => {
+          console.log("Prestation ajoutée avec succès à l'intervention.");
+          this.popupVisibleAddPrestation = false;
+          this.popupVisibleEditIntervention = false;
+          this.loadGridData();
+          this.resetForm2;
+        },
+        (error) => {
+          console.error(
+            "Erreur lors de l'ajout de la prestation à l'intervention:",
+            error
+          );
+          notify("Cette prestation est déjà affectée à l'intervention");
+        }
+      );
+  }
+
+  onSubmitNewPrestAll(event: any): void {
+    const formData = { ...this.addPrestAll };
+    this.addPrestAll.id_intervention = formData.id_intervention;
+    formData.id_personnel = this.user.id_personnel;
+
+    console.log('Submitting formData:', formData);
+
+    this.nurscareService
+      .addPrestationIntoExistentIntervention(
+        this.addPrestAll.id_intervention,
+        formData
+      )
+      .subscribe(
+        (response) => {
+          console.log("Prestation ajoutée avec succès à l'intervention.");
+          this.popupVisibleAddPrestationAll = false;
+          this.popupVisibleEditInterventionAll = false;
+          this.loadGridData();
+          this.resetForm2;
+        },
+        (error) => {
+          console.error(
+            "Erreur lors de l'ajout de la prestation à l'intervention:",
+            error
+          );
+          notify("Cette prestation est déjà affectée à l'intervention");
+        }
+      );
+  }
+
+  loadGridData() {
+    this.AgendaInterventions();
+    this.AgendaPrestations();
+    this.AgendaPrestationsAll();
+    this.filtrerInterventionsPourAujourdhui();
   }
 
   LoadPatient() {
@@ -212,7 +304,10 @@ export class AgendaprevisionnelComponent implements OnInit {
               id_intervention: item.id_intervention,
             };
           });
-
+          this.idsIntervention2 = this.agendasPrevisionnels2.map((item) => ({
+            id_intervention: item.id_intervention,
+          }));
+          console.log('IDs des interventions', this.idsIntervention2);
           console.log('AGENDA', this.agendasPrevisionnels2);
         } else {
           console.error('Result or result.agendasPrevisionnels is undefined');
@@ -242,10 +337,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   AgendaPrestationsAll(): void {
     this.nurscareService.getPrestationsall().subscribe(
       (result) => {
-        console.log(
-          'PRESTALL:',
-          result
-        );
+        console.log('PRESTALL:', result);
         this.prestationsall = result.agendasPrestations;
       },
       (error) => {
@@ -257,12 +349,12 @@ export class AgendaprevisionnelComponent implements OnInit {
   onAppointmentFormOpening(e: any): void {
     const idInterventionSelectionnee = e.appointmentData.id_intervention;
     console.log('PRESTATION ICI', this.prestations);
-    const prestationsFiltrees = this.prestations.filter(
+    this.prestationsFiltrees = this.prestations.filter(
       (item: any) => item.id_intervention === idInterventionSelectionnee
     );
-    console.log('Prestations filtrées:', prestationsFiltrees);
+    console.log('Prestations filtrées:', this.prestationsFiltrees);
 
-    if (prestationsFiltrees.length === 0) {
+    if (this.prestationsFiltrees.length === 0) {
       e.form.option('items', [
         {
           itemType: 'group',
@@ -292,7 +384,7 @@ export class AgendaprevisionnelComponent implements OnInit {
             },
             editorType: 'dxDataGrid',
             editorOptions: {
-              dataSource: prestationsFiltrees,
+              dataSource: this.prestationsFiltrees,
               scrolling: {
                 mode: 'virtual',
               },
@@ -378,6 +470,14 @@ export class AgendaprevisionnelComponent implements OnInit {
               onClick: () => this.onDeleteButtonClick(e),
             },
           },
+          {
+            itemType: 'button',
+            horizontalAlignment: 'left',
+            buttonOptions: {
+              text: 'Supervise Stagiaire',
+              onClick: () => this.onNewButtonClicked(e),
+            },
+          },
         ],
       },
     ]);
@@ -438,13 +538,17 @@ export class AgendaprevisionnelComponent implements OnInit {
         this.AgendaInterventions();
         this.AgendaPrestations();
         this.fetchInterventions(this.user.id_personnel);
-        this.filtrerInterventionsPourAujourdhui
+        this.filtrerInterventionsPourAujourdhui;
         e.component.hideAppointmentPopup();
       },
       (error) => {
         console.error('Error deleting prestation', error);
       }
     );
+  }
+
+  onNewButtonClicked(e: any): void {
+    console.log('Nouveau Bouton cliqué !');
   }
 
   onAppointmentDeleted(e: any) {
@@ -470,7 +574,9 @@ export class AgendaprevisionnelComponent implements OnInit {
   showPopupEditIntervention(e: any) {
     this.popupVisibleEditIntervention = true;
     this.fetchInterventions(this.user.id_personnel);
-    this.filtrerInterventionsPourAujourdhui()
+    this.AgendaPrestations;
+    this.AgendaPrestationsAll;
+    this.filtrerInterventionsPourAujourdhui();
   }
 
   showPopupEditInterventionall(e: any) {
@@ -634,55 +740,90 @@ export class AgendaprevisionnelComponent implements OnInit {
     console.log('old data', oldData);
     console.log('newData data update', newData);
     console.log('Données mises à jour', updatedData);
-  
+
     this.nurscareService.updateIntervention(updatedData).subscribe(
       (response) => {
         console.log('Intervention mise à jour avec succès', response);
       },
       (error) => {
-        console.error('Erreur lors de la mise à jour de l\'intervention', error);
+        console.error("Erreur lors de la mise à jour de l'intervention", error);
       }
     );
   }
-  
 
   onRowRemoving(e: any) {
     const DeletePatient = e.data;
-    console.log('data remove', DeletePatient.id_patient)
+    console.log('data remove', DeletePatient.id_patient);
   }
 
   onRowUpdating2(e: any) {
     const oldData = e.oldData;
     const newData = e.newData;
     const updatedData = { ...oldData, ...newData };
-  
+
     this.nurscareService.updateIntervention(updatedData).subscribe(
       (response) => {
         console.log('Intervention mise à jour avec succès', response);
       },
       (error) => {
-        console.error('Erreur lors de la mise à jour de l\'intervention', error);
+        console.error("Erreur lors de la mise à jour de l'intervention", error);
       }
     );
   }
-  
-  
-
 
   filtrerInterventionsPourAujourdhui() {
     const dateAujourdhui = new Date();
 
-    this.interventionfiltrermapday = this.interventionfiltrermap.filter(intervention => {
-      const dateDebut = new Date(intervention.startDate);
+    this.interventionfiltrermapday = this.interventionfiltrermap.filter(
+      (intervention) => {
+        const dateDebut = new Date(intervention.startDate);
 
-      return (
-        dateDebut.getDate() === dateAujourdhui.getDate() &&
-        dateDebut.getMonth() === dateAujourdhui.getMonth() &&
-        dateDebut.getFullYear() === dateAujourdhui.getFullYear()
-      );
-    });
-    console.log('MAP DAY', this.interventionfiltrermapday)
+        return (
+          dateDebut.getDate() === dateAujourdhui.getDate() &&
+          dateDebut.getMonth() === dateAujourdhui.getMonth() &&
+          dateDebut.getFullYear() === dateAujourdhui.getFullYear()
+        );
+      }
+    );
+
+    this.idsIntervention = this.interventionfiltrermapday.map(
+      (intervention) => intervention.id_intervention
+    );
+    this.idsInterventionArray = this.idsIntervention.map((id: any) => ({
+      id_intervention: id,
+    }));
+
+    this.prestationsFiltrees = this.prestations.filter((item: any) =>
+      this.idsIntervention.includes(item.id_intervention)
+    );
+
+    console.log('MAP DAY', this.interventionfiltrermapday);
+    console.log("IDs des interventions pour aujourd'hui", this.idsIntervention);
+    console.log('prest', this.prestationsFiltrees);
   }
-  
 
+  openAddPrestationPopup() {
+    this.popupVisibleAddPrestation = true;
+  }
+
+  openAddPrestationAllPopup() {
+    this.popupVisibleAddPrestationAll = true;
+  }
+
+  resetForm() {
+    this.interventionForm = {
+      libelle_intervention: null,
+      startDate: null,
+      endDate: null,
+      id_patient: null,
+    };
+  }
+
+  resetForm2() {
+    this.addPrest = {
+      id_intervention: null,
+      id_personnel: null,
+      id_prestation: null,
+    };
+  }
 }

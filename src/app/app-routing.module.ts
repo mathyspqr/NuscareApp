@@ -8,7 +8,7 @@ import { TasksComponent } from './pages/tasks/tasks.component';
 import { AdministrationComponent } from './pages/administration/administration.component';
 import { PatientComponent } from './pages/patient/patient.component';
 import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendaprevisionnel.component';
-import { DxDataGridModule, DxFormModule } from 'devextreme-angular';
+import { DxDataGridModule, DxFormModule, DxTagBoxModule } from 'devextreme-angular';
 import { DxButtonModule } from 'devextreme-angular';
 import { NurscareService } from '../app/shared/services/nuscare.service'; 
 
@@ -70,7 +70,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule, DxButtonModule],
+  imports: [RouterModule.forRoot(routes, { useHash: true }), DxDataGridModule, DxFormModule, DxButtonModule, DxTagBoxModule],
   providers: [AuthGuardService, NurscareService],
   exports: [RouterModule],
   declarations: [

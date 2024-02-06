@@ -6,6 +6,7 @@
   icon="/assets/icons/intervention.png"
   text="Editer mes interventions"
   style="margin-right: 10px; margin-left: 10px"
+  *ngIf="!interventionbool"
 ></dx-button>
 
 <dx-button
@@ -37,31 +38,105 @@
   [(visible)]="popupVisibleEditIntervention"
   title="Editer mes interventions"
 >
-<h2>Edition des interventions</h2>
+  <div>
+    <h2>Edition des interventions</h2>
 
-<dx-data-grid
-  id="gridContainer"
-  [dataSource]="interventionfiltrermapday"
-  keyExpr="id_intervention"
-  [showBorders]="true"
-  (onRowUpdating)="onRowUpdating($event)">
+    <dx-data-grid
+      id="gridContainerInterventions"
+      [dataSource]="interventionfiltrermapday"
+      keyExpr="id_intervention"
+      [showBorders]="true"
+      (onRowUpdating)="onRowUpdating($event)"
+    >
+      <dxo-editing
+        mode="popup"
+        [allowUpdating]="true"
+        [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }"
+      >
+      </dxo-editing>
+    </dx-data-grid>
+  </div>
 
-  <dxo-editing
-  mode="popup"
-  [allowUpdating]="true"
-  [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }">
-  <dx-popup
-      [width]="'80%'"
-      [height]="'80%'"
-      [hideOnOutsideClick]="true"
-      [showCloseButton]="true"
-      [showTitle]="true"
+  <div>
+    <h2>Edition des prestations du jour</h2>
+
+    <dx-data-grid
+      id="gridContainerPrestations"
+      [dataSource]="prestationsFiltrees"
+      keyExpr="id_intervention"
+      [showBorders]="true"
+      (onRowUpdating)="onRowUpdating2($event)"
+    >
+      <dxi-column
+        dataField="id_intervention"
+        caption="ID Intervention"
+      ></dxi-column>
+      <dxi-column
+        dataField="libelle_prestation"
+        caption="Libellé Prestation"
+      ></dxi-column>
+      <dxi-column
+        dataField="id_prestation"
+        caption="ID Prestation"
+      ></dxi-column>
+      <dxo-editing
+        mode="popup"
+        [allowUpdating]="true"
+        [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }"
+      >
+      </dxo-editing>
+    </dx-data-grid>
+
+    <dx-button
+      text="Ajouter une nouvelle prestation"
+      (onClick)="openAddPrestationPopup()"
+    >
+    </dx-button>
+
+    <dx-popup
+    [width]="'80%'"
+    [height]="'80%'"
+    [hideOnOutsideClick]="true"
+    [showCloseButton]="true"
+    [showTitle]="true"
+    [(visible)]="popupVisibleAddPrestation"
+    [title]="'Ajout d une prestation supplémentaire'"
   >
+  <div *dxTemplate="let data of 'content'">
+    <dx-form [formData]="addPrest">
+      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+        <dxi-item
+        dataField="id_intervention"
+        editorType="dxSelectBox"
+        [editorOptions]="{
+          dataSource: idsInterventionArray,
+          displayExpr: 'id_intervention',
+        }"
+      >
+      </dxi-item>
+        <dxi-item
+          dataField="id_prestations"
+          editorType="dxTagBox"
+          [editorOptions]="{
+            dataSource: prestationsall,
+            valueExpr: 'id_prestation',
+            displayExpr: 'libelle_prestation',
+            placeholder: 'Sélectionner des prestations',
+            width: '100%',
+            searchEnabled: true,
+            showSelectionControls: true,
+            multiline: true,
+          }"
+        ></dxi-item>
+      </dxi-item>
+    </dx-form>
+    <div style="text-align: center; margin-top: 20px">
+      <dx-button icon="floppy" (click)="onSubmitNewPrest($event)"></dx-button>
+    </div>
+  </div>
+  
   </dx-popup>
-</dxo-editing>
-
-</dx-data-grid>
-
+  </div>
 </dx-popup>
 
 <dx-popup
@@ -72,31 +147,106 @@
   [(visible)]="popupVisibleEditInterventionAll"
   title="Editer les interventions"
 >
-<h2>Edition des interventions</h2>
+  <div>
+    <h2>Edition des interventions</h2>
 
-<dx-data-grid
-  id="gridContainer"
-  [dataSource]="agendasPrevisionnels2"
-  keyExpr="id_intervention"
-  [showBorders]="true"
-  (onRowUpdating)="onRowUpdating2($event)">
+    <dx-data-grid
+      id="gridContainerInterventions"
+      [dataSource]="agendasPrevisionnels2"
+      keyExpr="id_intervention"
+      [showBorders]="true"
+      (onRowUpdating)="onRowUpdating2($event)"
+    >
+      <dxo-editing
+        mode="popup"
+        [allowUpdating]="true"
+        [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }"
+      >
+      </dxo-editing>
+    </dx-data-grid>
+  </div>
 
-  <dxo-editing
-  mode="popup"
-  [allowUpdating]="true"
-  [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }">
-  <dx-popup
-      [width]="'80%'"
-      [height]="'80%'"
-      [hideOnOutsideClick]="true"
-      [showCloseButton]="true"
-      [showTitle]="true"
+  <div>
+    <h2>Edition des prestations</h2>
+
+    <dx-data-grid
+      id="gridContainerPrestations"
+      [dataSource]="prestations"
+      keyExpr="id_intervention"
+      [showBorders]="true"
+      (onRowUpdating)="onRowUpdating2($event)"
+    >
+      <dxi-column
+        dataField="id_intervention"
+        caption="ID Intervention"
+      ></dxi-column>
+      <dxi-column
+        dataField="libelle_prestation"
+        caption="Libellé Prestation"
+      ></dxi-column>
+      <dxi-column
+        dataField="id_prestation"
+        caption="ID Prestation"
+      ></dxi-column>
+      <dxo-editing
+        mode="popup"
+        [allowUpdating]="true"
+        [texts]="{ saveRowChanges: 'Enregistrer', cancelRowChanges: 'Annuler' }"
+      >
+      </dxo-editing>
+    </dx-data-grid>
+
+    <dx-button
+      text="Ajouter une nouvelle prestation"
+      (onClick)="openAddPrestationAllPopup()"
+    >
+    </dx-button>
+
+    <dx-popup
+    [width]="'80%'"
+    [height]="'80%'"
+    [hideOnOutsideClick]="true"
+    [showCloseButton]="true"
+    [showTitle]="true"
+    [(visible)]="popupVisibleAddPrestationAll"
+    [title]="'Ajout d une prestation supplémentaire'"
   >
+  <div *dxTemplate="let data of 'content'">
+    <dx-form [formData]="addPrestAll">
+      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+        <dxi-item
+        dataField="id_intervention"
+        editorType="dxSelectBox"
+        [editorOptions]="{
+          dataSource: idsIntervention2,
+          valueExpr: 'id_intervention',
+          displayExpr: 'id_intervention'
+        }"
+      >
+      </dxi-item>      
+      </dxi-item>
+        <dxi-item
+          dataField="id_prestations"
+          editorType="dxTagBox"
+          [editorOptions]="{
+            dataSource: prestationsall,
+            valueExpr: 'id_prestation',
+            displayExpr: 'libelle_prestation',
+            placeholder: 'Sélectionner des prestations',
+            width: '100%',
+            searchEnabled: true,
+            showSelectionControls: true,
+            multiline: true,
+          }"
+        ></dxi-item>
+    </dx-form>
+    <div style="text-align: center; margin-top: 20px">
+      <dx-button icon="floppy" (click)="onSubmitNewPrestAll($event)"></dx-button>
+    </div>
+  </div>
+  
   </dx-popup>
-</dxo-editing>
-
-</dx-data-grid>
-
+  </div>
 </dx-popup>
 
 <dx-popup
@@ -154,9 +304,9 @@
         ></dxi-item>
 
         <dxi-item
-        dataField="id_personnel"
-        editorType="dxSelectBox"
-        [editorOptions]="{
+          dataField="id_personnel"
+          editorType="dxSelectBox"
+          [editorOptions]="{
       dataSource: soignants,
       valueExpr: 'id_personnel',
       displayExpr: 'nomPrenom',
@@ -164,12 +314,12 @@
       width: '100%',
       searchEnabled: true,
     }"
-      ></dxi-item>
+        ></dxi-item>
 
         <dxi-item
-        dataField="id_prestations"
-        editorType="dxTagBox"
-        [editorOptions]="{
+          dataField="id_prestations"
+          editorType="dxTagBox"
+          [editorOptions]="{
           dataSource: prestationsall,
           valueExpr: 'id_prestation',
           displayExpr: 'libelle_prestation',
@@ -179,10 +329,7 @@
           showSelectionControls: true,
           multiline: true,
         }"
-      ></dxi-item>
-      
-      
-      
+        ></dxi-item>
       </dxi-item>
     </dx-form>
 
@@ -205,9 +352,8 @@
   (onAppointmentDeleted)="onAppointmentDeleted($event)"
   (onAppointmentFormHiding)="onDeleteButtonClick($event)"
 >
-<dxo-editing [allowUpdating]="true"></dxo-editing>
+  <dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
-
 
 <dx-scheduler
   *ngIf="!interventionbool"
@@ -223,8 +369,7 @@
   <dxo-editing [allowUpdating]="true"></dxo-editing>
 </dx-scheduler>
 
-
-<br/>
+<br />
 
 <dx-button
   type="default"

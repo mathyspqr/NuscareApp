@@ -86,4 +86,10 @@ export class NurscareService {
     const apiUrl = `${this.googleMapsGeocodingApiUrl}?address=${encodedAddress}&key=${this.apiKey}`;
     return this.http.get(apiUrl);
   }
+
+  addPrestationIntoExistentIntervention(idIntervention: number, prestationForm: any): Observable<any> {
+    const url = `${this.baseUrl}/ajouter-prestation/${idIntervention}`;
+    return this.http.post(url, prestationForm);
+  }
+  
 }
