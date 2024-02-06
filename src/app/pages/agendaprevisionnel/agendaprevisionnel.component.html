@@ -32,6 +32,111 @@
     <dx-form [formData]="prestationfrom">
       <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
 
+
+        
+
+
+
+
+
+
+
+
+
+
+    
+        <label for="categorie">Sélectionnez une catégorie :</label>
+        <select id="categorie" name="categorie" onchange="updateSousCategorie()">
+          <option value="actes-soin">Actes de soin</option>
+          <option value="actes-analyse">Actes d’analyse</option>
+          <option value="actes-preventifs">Actes préventifs</option>
+        </select>
+        
+        <label for="sousCategorie">Sélectionnez une prestation :</label>
+        <select id="sousCategorie" name="sousCategorie">
+          <!-- Les options seront mises à jour dynamiquement par JavaScript -->
+        </select>
+        
+        <script>
+        function updateSousCategorie() {
+          var categorieSelect = document.getElementById("categorie");
+          var sousCategorieSelect = document.getElementById("sousCategorie");
+        
+          // Réinitialiser la liste des titres
+          sousCategorieSelect.innerHTML = "";
+        
+          // Récupérer la valeur sélectionnée dans le premier menu déroulant
+          var categorie = categorieSelect.value;
+        
+          // Ajouter les options en fonction de la catégorie sélectionnée
+          switch (categorie) {
+            case "actes-soin":
+              addOption(sousCategorieSelect, "Pose / retrait d’une attelle");
+              addOption(sousCategorieSelect, "Nettoyage d’une plaie");
+              addOption(sousCategorieSelect, "Changement d’un pansement");
+              addOption(sousCategorieSelect, "Remise en place d’une articulation");
+              addOption(sousCategorieSelect, "Toilette du patient");
+              break;
+        
+            case "actes-analyse":
+              addOption(sousCategorieSelect, "Prise de sang");
+              addOption(sousCategorieSelect, "Prise d’échantillon buccal");
+              addOption(sousCategorieSelect, "Prise d’autres échantillons");
+              break;
+        
+            case "actes-preventifs":
+              addOption(sousCategorieSelect, "Evaluation Sevrage Alcoolisme");
+              addOption(sousCategorieSelect, "Evaluation Sevrage Tabagisme");
+              addOption(sousCategorieSelect, "Evaluation Psychologique Dépression");
+              addOption(sousCategorieSelect, "Evaluation Psychologique Dépression");
+              break;
+        
+            default:
+              break;
+          }
+        }
+        
+        function addOption(select, text) {
+          var option = document.createElement("option");
+          option.value = text;
+          option.text = text;
+          select.add(option);
+        }
+        </script>
+        
+        </body>
+        </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <dxi-item
           dataField="libelle_prestation"
           editorType="dxTextBox"
