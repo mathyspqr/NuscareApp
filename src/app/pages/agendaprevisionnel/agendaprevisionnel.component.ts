@@ -9,6 +9,8 @@ import notify from 'devextreme/ui/notify';
 import { TasksComponent } from '../tasks/tasks.component';
 import { dxSchedulerAppointment } from 'devextreme/ui/scheduler';
 import { DxPopupComponent } from 'devextreme-angular';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-agendaprevisionnel',
@@ -29,9 +31,14 @@ export class AgendaprevisionnelComponent implements OnInit {
 
   id_prestationsupp!: number;
 
-  prestationTokenDeleted: EventEmitter<void> = new EventEmitter<void>();
-
   adresseInfo: any[] = [];
+  agendasPrevisionnels3!: {
+    text: any;
+    startDate: any;
+    endDate: any;
+    id_intervention: any;
+    etat_intervention: any;
+  }[];
 
   constructor(
     private nurscareService: NurscareService,
@@ -296,17 +303,29 @@ export class AgendaprevisionnelComponent implements OnInit {
         if (result && result.agendasInterventions) {
           this.agendasPrevisionnels = result.agendasInterventions;
 
-          this.agendasPrevisionnels2 = this.agendasPrevisionnels.map((item) => {
-            return {
+          this.agendasPrevisionnels2 = this.agendasPrevisionnels.map(
+            (item) => ({
               text: item.libelle_intervention,
               startDate: item.date_intervention_debut,
               endDate: item.date_intervention_fin,
               id_intervention: item.id_intervention,
-            };
-          });
+            })
+          );
+
+          this.agendasPrevisionnels3 = this.agendasPrevisionnels.map(
+            (item) => ({
+              text: item.libelle_intervention,
+              startDate: item.date_intervention_debut,
+              endDate: item.date_intervention_fin,
+              id_intervention: item.id_intervention,
+              etat_intervention: item.etat_intervention,
+            })
+          );
+
           this.idsIntervention2 = this.agendasPrevisionnels2.map((item) => ({
             id_intervention: item.id_intervention,
           }));
+
           console.log('IDs des interventions', this.idsIntervention2);
           console.log('AGENDA', this.agendasPrevisionnels2);
         } else {
@@ -463,6 +482,18 @@ export class AgendaprevisionnelComponent implements OnInit {
             },
           },
           {
+            editorType: 'dxTextBox',
+            dataField: 'email_patient',
+            label: {
+              text: 'Email Patient',
+            },
+            editorOptions: {
+              readOnly: true,
+              value: '',
+              visible: false,
+            },
+          },
+          {
             itemType: 'button',
             horizontalAlignment: 'left',
             buttonOptions: {
@@ -476,6 +507,14 @@ export class AgendaprevisionnelComponent implements OnInit {
             buttonOptions: {
               text: 'Supervise Stagiaire',
               onClick: () => this.onNewButtonClicked(e),
+            },
+          },
+          {
+            itemType: 'button',
+            horizontalAlignment: 'left',
+            buttonOptions: {
+              text: 'Facturer intervention',
+              onClick: () => this.onNewButtonClickedFacturation(e),
             },
           },
         ],
@@ -510,6 +549,20 @@ export class AgendaprevisionnelComponent implements OnInit {
       e.form.option(
         `items[0].items[${prenomTextBoxIndex}].editorOptions.value`,
         rowData?.prenom_patient || ''
+      );
+    }
+
+    const emailTextBoxIndex = e.form
+      .option('items')[0]
+      .items.findIndex((item: any) => item.dataField === 'email_patient');
+    e.form.option(
+      `items[0].items[${emailTextBoxIndex}].editorOptions.visible`,
+      show
+    );
+    if (show) {
+      e.form.option(
+        `items[0].items[${emailTextBoxIndex}].editorOptions.value`,
+        rowData?.email_patient || ''
       );
     }
 
@@ -551,6 +604,96 @@ export class AgendaprevisionnelComponent implements OnInit {
     console.log('Nouveau Bouton cliqué !');
   }
 
+  onNewButtonClickedFacturation(e: any): void {
+    console.log('Nouveau Bouton cliqué facturation !');
+  
+    const updatedData = {
+      etat_intervention: 'facturé',
+    };
+  
+    const firstIntervention = this.prestationsFiltrees[0];
+  
+    if (firstIntervention) {
+      const updatedIntervention = {
+        ...firstIntervention,
+        ...updatedData,
+      };
+  
+      this.nurscareService.updateIntervention(updatedIntervention).subscribe(
+        (response) => {
+          console.log('Intervention mise à jour avec succès', response);
+        },
+        (error) => {
+          console.error(
+            "Erreur lors de la mise à jour de l'intervention",
+            error
+          );
+        }
+      );
+  
+      const currentDate = new Date();
+      const formattedDate = `${currentDate.getDate()}/${
+        currentDate.getMonth() + 1
+      }/${currentDate.getFullYear()}`;
+  
+      const pdf = new jsPDF();
+  
+      // Ajoutez le titre avec retour à la ligne
+      const titleText = `Facture des Prestations de ${firstIntervention.prenom_patient} ${firstIntervention.nom_patient} du ${firstIntervention.date_intervention_debut} au ${firstIntervention.date_intervention_fin}`;
+      const titleLines = pdf.splitTextToSize(titleText, pdf.internal.pageSize.width - 20);
+  
+      titleLines.forEach((line:any, index:any) => {
+        pdf.text(line, 10, 10 + index * 10);
+      });
+  
+      // Calculez la hauteur totale du texte du titre
+      const titleHeight = titleLines.length * 10;
+  
+      // Tableau de données
+      const data = this.prestationsFiltrees.map(intervention => [intervention.libelle_prestation, `${intervention.prix_prestation} €`]);
+  
+      // Ajoutez le total dans le tableau
+      const totalPrix = this.prestationsFiltrees.reduce((acc, intervention) => acc + intervention.prix_prestation, 0);
+      data.push(['Total', `${totalPrix} €`]);
+  
+      // Ajoutez le tableau à partir des données avec jsPDF-AutoTable
+      (pdf as any).autoTable({
+        head: [['Libellé de Prestation', 'Prix de Prestation']],
+        body: data,
+        startY: 20 + titleHeight, // Ajustez la position de départ du tableau en ajoutant la hauteur du texte du titre
+      });
+  
+      // Spécifiez un nom de fichier lors de la sauvegarde du PDF
+      const pdfFileName = 'fake_invoice.pdf';
+      pdf.save(pdfFileName);
+  
+      // Utilisez 'output' pour obtenir les données Base64 après la sauvegarde
+      const fakePdfBase64 = pdf.output('datauristring');
+  
+      const contenudumail = {
+        to: firstIntervention.email_patient,
+        subject: `Intervention du ${formattedDate}`,
+        text: `Bonjour Madame ${firstIntervention.prenom_patient}, voici la facture de votre intervention ci-joint. Total: ${totalPrix} €`,
+        attachments: [
+          {
+            filename: pdfFileName,
+            content: fakePdfBase64.split(',')[1],
+            encoding: 'base64',
+          },
+        ],
+      };
+  
+      this.nurscareService.sendInvoice(contenudumail).subscribe(
+        (response) => {
+          console.log('Envoi du mail au client', response);
+        },
+        (error) => {
+          console.error("Erreur lors de l'envoi du mail", error);
+        }
+      );
+    }
+  }
+  
   onAppointmentDeleted(e: any) {
     const deletedAppointment = e.appointmentData;
     console.log('EFFACER', e.appointmentData);
@@ -764,6 +907,8 @@ export class AgendaprevisionnelComponent implements OnInit {
     this.nurscareService.updateIntervention(updatedData).subscribe(
       (response) => {
         console.log('Intervention mise à jour avec succès', response);
+
+        this.popupVisibleEditInterventionAll = false;
       },
       (error) => {
         console.error("Erreur lors de la mise à jour de l'intervention", error);

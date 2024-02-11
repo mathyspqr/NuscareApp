@@ -80,7 +80,6 @@ export class NurscareService {
     return this.http.put<any>(`${this.baseUrl}/updateintervention/${idIntervention}`, interventionInfo);
   }
   
-  
   geocodeAddress(address: string): Observable<any> {
     const encodedAddress = encodeURIComponent(address);
     const apiUrl = `${this.googleMapsGeocodingApiUrl}?address=${encodedAddress}&key=${this.apiKey}`;
@@ -90,6 +89,10 @@ export class NurscareService {
   addPrestationIntoExistentIntervention(idIntervention: number, prestationForm: any): Observable<any> {
     const url = `${this.baseUrl}/ajouter-prestation/${idIntervention}`;
     return this.http.post(url, prestationForm);
+  }
+
+  sendInvoice(mailOptions: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/envoiefacture`, mailOptions);
   }
   
 }

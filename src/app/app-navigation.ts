@@ -1,4 +1,3 @@
-
 export const navigation = [
   {
     text: 'Accueil',
@@ -17,7 +16,18 @@ export const navigation = [
       {
         text: 'Administration',
         icon: 'group',
-        path: '/administration'
+        items: [
+          {
+            text: 'Tableau de bord',
+            icon: 'dataarea',
+            path: 'dashboard'
+          },
+          {
+            text: 'Rôle',
+            icon: 'tags',
+            path: '/administration'
+          },
+        ]
       },
       {
         text: 'Patient',
