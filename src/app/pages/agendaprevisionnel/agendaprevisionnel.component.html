@@ -410,9 +410,18 @@
 
   <dx-data-grid
     id="gridContainer"
-    [dataSource]="itinerairemap"
+    [dataSource]="filteredUsers"
     [showBorders]="true"
   >
+    <dxi-column
+      dataField="adresse_patient"
+      caption="Adresse du patient"
+    ></dxi-column>
+    <dxi-column dataField="nom_patient" caption="Nom du patient"></dxi-column>
+    <dxi-column
+      dataField="prenom_patient"
+      caption="Prenom du patient"
+    ></dxi-column>
   </dx-data-grid>
 </dx-popup>
 

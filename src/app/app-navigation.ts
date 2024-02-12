@@ -14,22 +14,6 @@ export const navigation = [
         path: '/profile'
       },
       {
-        text: 'Administration',
-        icon: 'group',
-        items: [
-          {
-            text: 'Tableau de bord',
-            icon: 'dataarea',
-            path: 'dashboard'
-          },
-          {
-            text: 'Rôle',
-            icon: 'tags',
-            path: '/administration'
-          },
-        ]
-      },
-      {
         text: 'Patient',
         icon: 'card',
         path: '/patient'
@@ -44,6 +28,22 @@ export const navigation = [
         icon: 'doc',
         path: '/tasks'
       }
+    ]
+  },
+  {
+    text: 'Administration',
+    icon: 'group',
+    items: [
+      {
+        text: 'Tableau de bord',
+        icon: 'dataarea',
+        path: 'dashboard'
+      },
+      {
+        text: 'Rôle',
+        icon: 'tags',
+        path: '/administration'
+      },
     ]
   }
 ];

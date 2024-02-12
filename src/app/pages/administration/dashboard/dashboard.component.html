@@ -1,32 +1,34 @@
-<div id="gauge-demo">
-    <dx-circular-gauge
-      id="gauge"
-      [value]="value.mean"
-      [subvalues]="[value.min, value.max]"
+<div style="display: flex; justify-content: space-between;">
+  <div style="width: 48%;">
+    <dx-pie-chart
+      id="pie"
+      title="Statistiques des Interventions"
+      palette="bright"
+      [dataSource]="dataSource"
     >
-      <dxo-range-container>
-        <dxi-range [startValue]="10" [endValue]="20" color="#0077BE"></dxi-range>
-        <dxi-range [startValue]="20" [endValue]="30" color="#E6E200"></dxi-range>
-        <dxi-range [startValue]="30" [endValue]="40" color="#77DD77"></dxi-range>
-      </dxo-range-container>
-  
-      <dxo-scale [startValue]="10" [endValue]="40" [tickInterval]="5">
-      </dxo-scale>
-      <dxo-tooltip [enabled]="true"></dxo-tooltip>
-      <dxo-title text="Temperature in the Greenhouse">
-        <dxo-font [size]="28"></dxo-font>
-      </dxo-title>
-    </dx-circular-gauge>
-  
-    <dx-select-box
-      #seasons
-      id="seasons"
-      [dataSource]="data"
-      [inputAttr]="{ 'aria-label': 'Season' }"
-      [width]="150"
-      displayExpr="name"
-      [(value)]="value"
-    >
-    </dx-select-box>
+      <dxi-series argumentField="country" valueField="area">
+        <dxo-label [visible]="true">
+          <dxo-connector [visible]="true" [width]="1"></dxo-connector>
+        </dxo-label>
+      </dxi-series>
+      <dxo-export [enabled]="true"></dxo-export>
+    </dx-pie-chart>
   </div>
-  
+
+  <div style="width: 48%;">
+    <dx-chart
+      id="bar"
+      title="Statistiques des Interventions"
+      palette="bright"
+      [dataSource]="barChartData"
+    >
+      <dxi-series
+        argumentField="category"
+        valueField="value"
+        type="bar"
+      >
+      </dxi-series>
+      <dxo-export [enabled]="true"></dxo-export>
+    </dx-chart>
+  </div>
+</div>
