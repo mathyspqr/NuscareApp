@@ -13,9 +13,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { NurscareService } from './shared/services/nuscare.service';
 import { ThemeService } from './shared/services/theme.service';
 import { TasksComponent } from '../app/pages/tasks/tasks.component';
-import { DxDataGridModule, DxSchedulerComponent, DxSelectBoxModule,DxSchedulerModule, DxContextMenuModule, DxButtonModule, DxPopupModule, DxFormModule, DxBoxModule, DxMapModule, DxTagBoxModule, DxCircularGaugeModule } from 'devextreme-angular';
+import { DxDataGridModule, DxSchedulerComponent, DxSelectBoxModule,DxSchedulerModule, DxContextMenuModule, DxButtonModule, DxPopupModule, DxFormModule, DxBoxModule, DxMapModule, DxTagBoxModule, DxCircularGaugeModule, DxPieChartModule, DxChartModule, DxBarGaugeModule } from 'devextreme-angular';
 import { AdministrationComponent } from './pages/administration/administration.component';
-import { DxoDetailsModule, DxoMasterDetailModule } from 'devextreme-angular/ui/nested';
+import { DxiSeriesModule, DxiToolbarItemModule, DxoDetailsModule, DxoMasterDetailModule } from 'devextreme-angular/ui/nested';
 import { PatientComponent } from './pages/patient/patient.component';
 import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendaprevisionnel.component';
 import { DashboardComponent } from './pages/administration/dashboard/dashboard.component';
@@ -54,7 +54,11 @@ import { DashboardComponent } from './pages/administration/dashboard/dashboard.c
     DxBoxModule,
     DxMapModule,
     DxTagBoxModule,
-    DxCircularGaugeModule
+    DxCircularGaugeModule,
+    DxPieChartModule,
+    DxiSeriesModule,
+    DxChartModule,
+    DxBarGaugeModule
   ],
   providers: [
     AuthService,

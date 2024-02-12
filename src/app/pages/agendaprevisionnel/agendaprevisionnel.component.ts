@@ -22,7 +22,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   agendasPrevisionnels2: any[] = [];
   prestations: any[] = [];
   prestationsall: any[] = [];
-  getMovieById: any;
+  filteredUsers  :any=[]
 
   idsIntervention: any[] = [];
   idsIntervention2: any[] = [];
@@ -609,6 +609,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   
     const updatedData = {
       etat_intervention: 'facturé',
+      date_facturation: new Date().toISOString(),
     };
   
     const firstIntervention = this.prestationsFiltrees[0];
@@ -629,7 +630,7 @@ export class AgendaprevisionnelComponent implements OnInit {
             error
           );
         }
-      );
+      ); 
   
       const currentDate = new Date();
       const formattedDate = `${currentDate.getDate()}/${
@@ -764,12 +765,12 @@ export class AgendaprevisionnelComponent implements OnInit {
     this.nurscareService.getPatient().subscribe(
       (result) => {
         console.log('Patients to map', result, 'Intervention', patientsadresse);
-        let filteredUsers = result.filter((user: any) =>
+        this.filteredUsers = result.filter((user: any) =>
           patientsadresse.includes(user.id_patient)
         );
-        console.log('Info Patients', filteredUsers);
+        console.log('Info Patients', this.filteredUsers);
 
-        let adresseInfo = filteredUsers.map(
+        let adresseInfo = this.filteredUsers.map(
           (user: any) => user.adresse_patient
         );
         console.log('Info Patients adresse', adresseInfo);
@@ -788,6 +789,7 @@ export class AgendaprevisionnelComponent implements OnInit {
                 itineraireResult.orderedAddresses
               );
               this.itinerairemap = itineraireResult.orderedAddresses;
+              console.log('itineraire map', this.itinerairemap)
               this.onGeocode();
             },
             (error) => {
@@ -903,11 +905,20 @@ export class AgendaprevisionnelComponent implements OnInit {
     const oldData = e.oldData;
     const newData = e.newData;
     const updatedData = { ...oldData, ...newData };
-
+  
+    if (newData.etat_intervention === 'terminé') {
+      const currentDate = new Date();
+      
+      // Formater la date avec l'heure et les minutes
+      const formattedDate = currentDate.toISOString().slice(0, 19).replace('T', ' ');
+  
+      updatedData.date_integration = formattedDate;
+    }
+  
     this.nurscareService.updateIntervention(updatedData).subscribe(
       (response) => {
         console.log('Intervention mise à jour avec succès', response);
-
+  
         this.popupVisibleEditInterventionAll = false;
       },
       (error) => {
@@ -915,6 +926,7 @@ export class AgendaprevisionnelComponent implements OnInit {
       }
     );
   }
+  
 
   filtrerInterventionsPourAujourdhui() {
     const dateAujourdhui = new Date();
