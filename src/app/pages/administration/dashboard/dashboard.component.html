@@ -1,0 +1,35 @@
+//PANEL ADMIN STATISTIQUE
+<div style="display: flex; justify-content: space-between;">
+  <div style="width: 48%;">
+    <dx-pie-chart
+      id="pie"
+      title="Statistiques des Interventions"
+      palette="bright"
+      [dataSource]="dataSource"
+    >
+      <dxi-series argumentField="country" valueField="area">
+        <dxo-label [visible]="true">
+          <dxo-connector [visible]="true" [width]="1"></dxo-connector>
+        </dxo-label>
+      </dxi-series>
+      <dxo-export [enabled]="true"></dxo-export>
+    </dx-pie-chart>
+  </div>
+
+  <div style="width: 48%;">
+    <dx-chart
+      id="bar"
+      title="Statistiques des Interventions"
+      palette="bright"
+      [dataSource]="barChartData"
+    >
+      <dxi-series
+        argumentField="category"
+        valueField="value"
+        type="bar"
+      >
+      </dxi-series>
+      <dxo-export [enabled]="true"></dxo-export>
+    </dx-chart>
+  </div>
+</div>

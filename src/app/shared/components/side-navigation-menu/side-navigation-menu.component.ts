@@ -57,31 +57,33 @@ export class SideNavigationMenuComponent
   get items() {
     if (!this._items && this.idRole) {
       console.log('Current User Role ID:', this.idRole);
-
+  
       this._items = navigation
         .map((item) => {
-          if (item.text === 'Outils') {
+          if (item.text === 'Outils' && this.idRole !== 2) {
             return {
               ...item,
-              items: item.items!.filter((subItem) => {
-                return !(
-                  subItem.text === 'Administration' && this.idRole !== 2
-                );
+              items: item.items?.filter((subItem) => {
+                return !(subItem.text === 'Administration');
               }),
             };
+          } else if (item.text === 'Administration' && this.idRole !== 2) {
+            return null; // Exclude 'Administration' when not allowed
           } else {
             return item;
           }
         })
+        .filter(Boolean)
         .map((item) => {
-          if (item.path && !/^\//.test(item.path)) {
-            item.path = `/${item.path}`;
+          if (item!.path && !/^\//.test(item!.path)) {
+            item!.path = `/${item!.path}`;
           }
           return { ...item, expanded: !this._compactMode };
         });
     }
     return this._items;
   }
+  
 
   private _compactMode = false;
   @Input()
