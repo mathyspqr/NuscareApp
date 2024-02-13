@@ -11,6 +11,7 @@ import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendapr
 import { DxDataGridModule, DxFormModule, DxTagBoxModule } from 'devextreme-angular';
 import { DxButtonModule } from 'devextreme-angular';
 import { NurscareService } from '../app/shared/services/nuscare.service'; 
+import { DashboardComponent } from './pages/administration/dashboard/dashboard.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,11 @@ const routes: Routes = [
   {
     path: 'administration',
     component: AdministrationComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
     canActivate: [ AuthGuardService ]
   },
   {
