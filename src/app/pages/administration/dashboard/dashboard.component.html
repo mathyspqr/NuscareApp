@@ -1,6 +1,6 @@
 //PANEL ADMIN STATISTIQUE
-<div style="display: flex; justify-content: space-between;">
-  <div style="width: 48%;">
+<div style="display: flex; justify-content: space-between">
+  <div style="width: 48%">
     <dx-pie-chart
       id="pie"
       title="Statistiques des Interventions"
@@ -16,20 +16,35 @@
     </dx-pie-chart>
   </div>
 
-  <div style="width: 48%;">
+  <div style="width: 48%">
     <dx-chart
       id="bar"
       title="Statistiques des Interventions"
       palette="bright"
       [dataSource]="barChartData"
     >
-      <dxi-series
-        argumentField="category"
-        valueField="value"
-        type="bar"
-      >
+      <dxi-series argumentField="category" valueField="value" type="bar">
       </dxi-series>
       <dxo-export [enabled]="true"></dxo-export>
     </dx-chart>
   </div>
+
+  <div style="width: 33.33%">
+    <dx-data-grid [dataSource]="percentageData">
+      <dxi-column dataField="domain" caption="Domain"></dxi-column>
+    </dx-data-grid>
+  </div>
+
+  <div style="width: 33.33%">
+    <dx-data-grid [dataSource]="percentageData">
+      <dxi-column dataField="percentage" caption="Percentage"></dxi-column>
+    </dx-data-grid>
+  </div>
+
+  <div style="width: 33.33%">
+    <dx-data-grid [dataSource]="percentageData">
+      <dxi-column dataField="totalPrestations" caption="Total Prestations"></dxi-column>
+    </dx-data-grid>
+  </div>
+
 </div>

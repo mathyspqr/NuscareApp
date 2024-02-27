@@ -1,14 +1,10 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { NurscareService } from '../../shared/services/nuscare.service';
 import {
-  AuthGuardService,
   AuthService,
 } from '../../shared/services/auth.service';
 import { EMPTY, Subscription, catchError, forkJoin } from 'rxjs';
 import notify from 'devextreme/ui/notify';
-import { TasksComponent } from '../tasks/tasks.component';
-import { dxSchedulerAppointment } from 'devextreme/ui/scheduler';
-import { DxPopupComponent } from 'devextreme-angular';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -23,6 +19,14 @@ export class AgendaprevisionnelComponent implements OnInit {
   prestations: any[] = [];
   prestationsall: any[] = [];
   filteredUsers  :any=[]
+
+
+  isPopupVisible: boolean = false;
+  rating: number = 0;
+  comment: string = '';
+  selectedStagiaire: any;
+
+  stagiaires: any[] = []
 
   idsIntervention: any[] = [];
   idsIntervention2: any[] = [];
@@ -39,6 +43,18 @@ export class AgendaprevisionnelComponent implements OnInit {
     id_intervention: any;
     etat_intervention: any;
   }[];
+
+  bons: {
+    selectedStagiaire: any,
+    rating: number,
+    comment: string
+  } = {
+    selectedStagiaire: null,
+    rating: 0,
+    comment: ''
+  };
+
+  lignecourante:any = []
 
   constructor(
     private nurscareService: NurscareService,
@@ -58,6 +74,8 @@ export class AgendaprevisionnelComponent implements OnInit {
     { id_categorie: 3, libelle_categorie: 'Actes préventifs' },
   ];
 
+  isMultiline = true;
+
   interventionbool!: boolean;
 
   popupVisibleIntervention = false;
@@ -67,6 +85,10 @@ export class AgendaprevisionnelComponent implements OnInit {
   popupVisibleitineraire = false;
   popupVisibleAddPrestation = false;
   popupVisibleAddPrestationAll = false;
+
+  supervise : boolean = false
+
+  bonsall : any [] = []
 
   currentDate: Date = new Date();
   user: any;
@@ -96,6 +118,7 @@ export class AgendaprevisionnelComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    
     this.user = this.authservice._user;
 
     if (
@@ -117,6 +140,8 @@ export class AgendaprevisionnelComponent implements OnInit {
     this.LoadPatient();
     this.LoadUser();
     this.AgendaPrestationsAll();
+    this.getStagiaire()
+    this.GetBons()
   }
 
   onSubmit(event: any): void {
@@ -434,15 +459,15 @@ export class AgendaprevisionnelComponent implements OnInit {
               },
               onSelectionChanged: (innerE: any) => {
                 const selectedRowData = innerE.selectedRowsData[0];
-                this.id_prestationsupp =
-                  innerE.selectedRowsData[0].id_prestation;
+                this.lignecourante = selectedRowData
                 if (selectedRowData) {
                   console.log('Ligne sélectionnée:', selectedRowData);
                   this.displayTextBoxes(e, true, selectedRowData);
                 } else {
                   this.displayTextBoxes(e, false);
                 }
-              },
+                  innerE.component.repaint();
+              }
             },
           },
           {
@@ -501,13 +526,13 @@ export class AgendaprevisionnelComponent implements OnInit {
               onClick: () => this.onDeleteButtonClick(e),
             },
           },
-          {
-            itemType: 'button',
-            horizontalAlignment: 'left',
-            buttonOptions: {
-              text: 'Supervise Stagiaire',
-              onClick: () => this.onNewButtonClicked(e),
-            },
+            {
+              itemType: 'button',
+              horizontalAlignment: 'left',
+              buttonOptions: {
+                text: 'Supervise Stagiaire',
+                onClick: () => this.onNewButtonClicked(e),
+              },
           },
           {
             itemType: 'button',
@@ -602,6 +627,16 @@ export class AgendaprevisionnelComponent implements OnInit {
 
   onNewButtonClicked(e: any): void {
     console.log('Nouveau Bouton cliqué !');
+    this.showPopup();
+  }
+
+  showPopup(): void {
+    this.isPopupVisible = true;
+  }
+  
+  // Méthode pour masquer la pop-up
+  hidePopup(): void {
+    this.isPopupVisible = false;
   }
 
   onNewButtonClickedFacturation(e: any): void {
@@ -636,39 +671,59 @@ export class AgendaprevisionnelComponent implements OnInit {
       const formattedDate = `${currentDate.getDate()}/${
         currentDate.getMonth() + 1
       }/${currentDate.getFullYear()}`;
-  
+      
       const pdf = new jsPDF();
-  
-      // Ajoutez le titre avec retour à la ligne
-      const titleText = `Facture des Prestations de ${firstIntervention.prenom_patient} ${firstIntervention.nom_patient} du ${firstIntervention.date_intervention_debut} au ${firstIntervention.date_intervention_fin}`;
-      const titleLines = pdf.splitTextToSize(titleText, pdf.internal.pageSize.width - 20);
-  
+      
+      pdf.setFont('helvetica');
+      
+      const startDate = new Date(firstIntervention.date_intervention_debut);
+      const endDate = new Date(firstIntervention.date_intervention_fin);
+      
+      const formattedStartDate = startDate.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+      const formattedEndDate = endDate.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+      
+      const titleText = `Facture des Prestations de ${firstIntervention.prenom_patient} ${firstIntervention.nom_patient} du ${formattedStartDate} au ${formattedEndDate}`;
+      const titleLines = pdf.splitTextToSize(titleText, pdf.internal.pageSize.width - 20);       
+            
       titleLines.forEach((line:any, index:any) => {
         pdf.text(line, 10, 10 + index * 10);
       });
-  
-      // Calculez la hauteur totale du texte du titre
-      const titleHeight = titleLines.length * 10;
-  
-      // Tableau de données
+      
+      const titleHeight = titleLines.length * 5;
+      
       const data = this.prestationsFiltrees.map(intervention => [intervention.libelle_prestation, `${intervention.prix_prestation} €`]);
-  
-      // Ajoutez le total dans le tableau
+      
       const totalPrix = this.prestationsFiltrees.reduce((acc, intervention) => acc + intervention.prix_prestation, 0);
-      data.push(['Total', `${totalPrix} €`]);
-  
-      // Ajoutez le tableau à partir des données avec jsPDF-AutoTable
+      data.push([{ content: 'Total', styles: { fontStyle: 'bold' } }, { content: `${totalPrix} €`, styles: { fontStyle: 'bold' } }]);
+      
       (pdf as any).autoTable({
         head: [['Libellé de Prestation', 'Prix de Prestation']],
         body: data,
-        startY: 20 + titleHeight, // Ajustez la position de départ du tableau en ajoutant la hauteur du texte du titre
+        startY: 20 + titleHeight,
       });
-  
-      // Spécifiez un nom de fichier lors de la sauvegarde du PDF
-      const pdfFileName = 'fake_invoice.pdf';
+      
+      const additionalText = `Facturé à l'adresse : ${firstIntervention.adresse_patient}`;
+      pdf.text(additionalText, 10, (pdf as any).autoTable.previous.finalY + 15);
+      
+      const nurscarePhrases = [
+        "Nurscare vous remercie pour votre confiance.",
+        "Pour toute information supplémentaire, veuillez nous contacter.",
+      ];
+      
+      const legalMentions = [
+        "Mentions légales : Nurscare SARL - Adresse légale - Numéro SIRET XXXXXX",
+      ];
+            
+      nurscarePhrases.forEach((phrase, index) => {
+        pdf.text(phrase, 10, (pdf as any).autoTable.previous.finalY + 20 + index * 10);
+      });
+      
+      legalMentions.forEach((mention, index) => {
+        pdf.text(mention, 10, (pdf as any).autoTable.previous.finalY + 50 + index * 10);
+      });
+      
+      const pdfFileName = 'facture.pdf';
       pdf.save(pdfFileName);
-  
-      // Utilisez 'output' pour obtenir les données Base64 après la sauvegarde
       const fakePdfBase64 = pdf.output('datauristring');
   
       const contenudumail = {
@@ -684,14 +739,14 @@ export class AgendaprevisionnelComponent implements OnInit {
         ],
       };
   
-      this.nurscareService.sendInvoice(contenudumail).subscribe(
-        (response) => {
-          console.log('Envoi du mail au client', response);
-        },
-        (error) => {
-          console.error("Erreur lors de l'envoi du mail", error);
-        }
-      );
+      // this.nurscareService.sendInvoice(contenudumail).subscribe(
+      //   (response) => {
+      //     console.log('Envoi du mail au client', response);
+      //   },
+      //   (error) => {
+      //     console.error("Erreur lors de l'envoi du mail", error);
+      //   }
+      // );
     }
   }
   
@@ -983,4 +1038,82 @@ export class AgendaprevisionnelComponent implements OnInit {
       id_prestation: null,
     };
   }
+
+  getStagiaire() {
+    this.nurscareService.getStagiaire().subscribe(
+      data => {
+        console.log('Stagiaires récupérés:', data);
+  
+        this.stagiaires = data.map((stagiaire: { nom_personnel: any; prenom_personnel: any; }) => ({
+          ...stagiaire,
+          displayFullName: `${stagiaire.nom_personnel} ${stagiaire.prenom_personnel}`
+        }));
+      },
+      error => {
+        console.error('Erreur lors de la récupération des stagiaires:', error);
+      }
+    );
+  }
+  
+  saveData() {
+  const bonsData = {
+    id_stagiaire: this.selectedStagiaire,
+    note_prestation: this.rating,
+    commentaire_prestation: this.comment,
+    id_prestation : this.lignecourante.id_prestation,
+    id_personnel : this.user.id_personnel,
+    id_intervention : this.lignecourante.id_intervention
+  };
+  console.log('Données à enregistrer:', bonsData);
+  this.isPopupVisible = false
+
+  this.nurscareService.getBons().subscribe(
+    bons => {
+      const bonExist = bons.some(bon => bon.id_stagiaire === bonsData.id_stagiaire && bon.id_prestation === bonsData.id_prestation && bon.id_intervention === bonsData.id_intervention);
+      if (bonExist) {
+        console.log('Le stagiaire a déjà un bon pour cette prestation de cette intervention.');
+      } else {
+        this.nurscareService.addBon(bonsData).subscribe(
+          () => {
+            notify('Bon ajouté avec succès');
+          },
+          (error) => {
+            notify('Erreur lors de l\'ajout du bon:', error);
+          }
+        );
+        this.resetPopupValues();
+      }
+    },
+    (error) => {
+      notify('Erreur lors de la récupération des bons:', error);
+    }
+  );
+
+  this.isPopupVisible = false;
+}
+
+resetPopupValues() {
+  this.bons = {
+    selectedStagiaire: null,
+    rating: 0,
+    comment: ''
+  };
+}
+
+onHtmlEditorValueChanged(event: any) {
+  this.comment = event.value
+  console.log('Contenu du HTML Editor modifié:', event.value);
+}
+
+onStagiaireSelectionChanged(event: any) {
+  console.log('Événement de sélection changé:', event);
+  console.log('Stagiaire sélectionné:', this.selectedStagiaire);
+}
+
+GetBons(){
+this.nurscareService.getBons().subscribe(data => {
+  this.bonsall = data;
+  console.log('BON ALL', this.bonsall)
+})
+}
 }

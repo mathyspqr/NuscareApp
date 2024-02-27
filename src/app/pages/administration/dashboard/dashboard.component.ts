@@ -9,12 +9,15 @@ import { NurscareService } from 'src/app/shared/services/nuscare.service';
 export class DashboardComponent implements OnInit {
   agendasPrevisionnels: any = [];
   dataSource: any[] = [];
-  barChartData: any[] = []; 
+  barChartData: any[] = [];
+  prestations: any[] = [];
+  percentageData: any[] = [];
 
   constructor(private NurscareService: NurscareService) {}
 
   ngOnInit(): void {
     this.AgendaInterventions();
+    this.AgendaPrestations();
   }
 
   AgendaInterventions(): void {
@@ -25,6 +28,7 @@ export class DashboardComponent implements OnInit {
         if (result && result.agendasInterventions) {
           this.agendasPrevisionnels = result.agendasInterventions;
           this.updateChartData();
+          this.calculatePercentageData();
         }
       },
       (error) => {
@@ -62,4 +66,40 @@ export class DashboardComponent implements OnInit {
       { category: 'Intégrées', value: integrees },
     ];
   }
+
+  AgendaPrestations(): void {
+    this.NurscareService.getPrestations().subscribe(
+      (result) => {
+        this.prestations = result.agendasPrestations.map(
+          (prestation: any) => prestation.libelle_categorie
+        );
+        console.log(
+          'Résultat de la requête côté client pour les prestations:',
+          this.prestations
+        );
+        this.calculatePercentageData();
+      },
+      (error) => {
+        console.error('Erreur côté client:', error);
+      }
+    );
+  }
+
+  calculatePercentageData(): void {
+    const domainCount = this.prestations.length;
+    const percentageMap = new Map();
+  
+    this.prestations.forEach((domain) => {
+      const count = this.prestations.filter((d) => d === domain).length;
+      const percentage = (count / domainCount) * 100;
+      percentageMap.set(domain, percentage.toFixed(2) + '%');
+    });
+  
+    this.percentageData = Array.from(percentageMap.entries()).map(([domain, percentage]) => ({
+      domain,
+      percentage,
+      totalPrestations: this.prestations.length,
+    }));
+  }
+  
 }
