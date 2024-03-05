@@ -7,6 +7,7 @@ import { Observable, catchError } from 'rxjs';
 })
 
 export class NurscareService {
+  
   private baseUrl = '/nurscare';
   private googleMapsGeocodingApiUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
   private apiKey = 'AIzaSyC6aoXl4XsKf8pHYAXD-SGcxZVO0D7R33c';
@@ -17,8 +18,25 @@ export class NurscareService {
     return this.http.get<any>(`${this.baseUrl}/`);
   }
 
+  getStagiaire(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/stagiaire/`);
+  }
+  
   getPatient(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/patient/`);
+  }
+
+  getOrganismes(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/organisme/`);
+  }
+
+  getBons(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/bons`);
+  }
+
+  addBon(bonData: any): Observable<any> {
+    const url = `${this.baseUrl}/bon`;
+    return this.http.post<any>(url, bonData);
   }
 
   getInterventions(): Observable<any> {
@@ -38,13 +56,11 @@ export class NurscareService {
   }
 
   addIntervention(interventionForm: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/addintervention`, interventionForm).pipe(
-    );
+    return this.http.post<any>(`${this.baseUrl}/addintervention`, interventionForm);
   }
 
   addPrestation(prestationForm: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/addprestation`, prestationForm).pipe(
-    );
+    return this.http.post<any>(`${this.baseUrl}/addprestation`, prestationForm);
   }
     
   createPatient(patientData: any): Observable<any> {

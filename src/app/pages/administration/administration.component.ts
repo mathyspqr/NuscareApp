@@ -14,6 +14,8 @@ export class AdministrationComponent implements OnInit, OnDestroy {
   personnels: any;
   private subscription!: Subscription;
 
+  organismes : any[] = []
+
   roles = [
     { value: 1, libelle_role: 'Stagiaire' },
     { value: 2, libelle_role: 'Directeur' },
@@ -29,6 +31,7 @@ export class AdministrationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.LoadUser();
+    this.fetchOrganisms()
   }
 
   onSelectionChanged(e: { component: { collapseAll: (arg0: number) => void; expandRow: (arg0: any) => void; }; currentSelectedRowKeys: any[]; }) {
@@ -69,5 +72,14 @@ export class AdministrationComponent implements OnInit, OnDestroy {
     );
   }
 
-  
+  fetchOrganisms(): void {
+    this.nurscareService.getOrganismes().subscribe(
+      (data) => {
+        this.organismes = data;
+      },
+      (error) => {
+        console.error('Error fetching organisms:', error);
+      }
+    );
+  }
 }

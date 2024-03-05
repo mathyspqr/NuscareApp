@@ -34,8 +34,18 @@
       placeholder="Sélectionner un rôle à affecter"
       [(value)]="detailData.data.id_role"
       (onValueChanged)="onRoleChange(detailData.data, $event)">
-    </dx-select-box>
-    
+    </dx-select-box>    
+    <br>
+    <div *ngIf="detailData.data.id_role === 1">
+      <dx-select-box
+      [(value)]="detailData.data.id_organisme"
+      placeholder="Sélectionnez un organisme"
+      [dataSource]="organismes"
+      displayExpr="nom_organisme"
+      valueExpr="id_organisme"
+      (onValueChanged)="onRoleChange(detailData.data, $event)">
+    </dx-select-box>    
+    </div>
   </div>
 </div>
 </dx-data-grid>

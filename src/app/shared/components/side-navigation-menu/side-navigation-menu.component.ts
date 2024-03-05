@@ -58,31 +58,57 @@ export class SideNavigationMenuComponent
     if (!this._items && this.idRole) {
       console.log('Current User Role ID:', this.idRole);
   
-      this._items = navigation
-        .map((item) => {
-          if (item.text === 'Outils' && this.idRole !== 2) {
-            return {
-              ...item,
-              items: item.items?.filter((subItem) => {
-                return !(subItem.text === 'Administration');
-              }),
-            };
-          } else if (item.text === 'Administration' && this.idRole !== 2) {
-            return null; // Exclude 'Administration' when not allowed
-          } else {
-            return item;
-          }
-        })
-        .filter(Boolean)
-        .map((item) => {
-          if (item!.path && !/^\//.test(item!.path)) {
-            item!.path = `/${item!.path}`;
-          }
-          return { ...item, expanded: !this._compactMode };
-        });
+      if (this.idRole === 1) {
+        // Si l'idRole est égal à 1, afficher uniquement la catégorie "Outils" avec la sous-catégorie "Profile"
+        this._items = navigation
+          .map((item) => {
+            if (item.text === 'Outils') {
+              return {
+                ...item,
+                items: item.items?.filter((subItem) => {
+                  return subItem.text === 'Profile';
+                }),
+              };
+            } else {
+              return null;
+            }
+          })
+          .filter(Boolean)
+          .map((item) => {
+            if (item!.path && !/^\//.test(item!.path)) {
+              item!.path = `/${item!.path}`;
+            }
+            return { ...item, expanded: !this._compactMode };
+          });
+      } else {
+        this._items = navigation
+          .map((item) => {
+            if (item.text === 'Outils' && this.idRole !== 2) {
+              return {
+                ...item,
+                items: item.items?.filter((subItem) => {
+                  return !(subItem.text === 'Administration');
+                }),
+              };
+            } else if (item.text === 'Administration' && this.idRole !== 2) {
+              return null;
+            } else {
+              return item;
+            }
+          })
+          .filter(Boolean)
+          .map((item) => {
+            if (item!.path && !/^\//.test(item!.path)) {
+              item!.path = `/${item!.path}`;
+            }
+            return { ...item, expanded: !this._compactMode };
+          });
+      }
     }
     return this._items;
   }
+  
+  
   
 
   private _compactMode = false;
