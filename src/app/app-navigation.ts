@@ -23,11 +23,6 @@ export const navigation = [
         icon: 'event',
         path: '/agenda'
       },
-      {
-        text: 'Tache',
-        icon: 'doc',
-        path: '/tasks'
-      }
     ]
   },
   {
@@ -45,5 +40,21 @@ export const navigation = [
         path: '/administration'
       },
     ]
-  }
+  },
+  {
+    text: 'Outils de secretaire',
+    icon: 'like',
+    items: [
+      {
+        text: 'Créer des interventions',
+        icon: 'event',
+        path: ''
+      },
+      {
+        text: 'Modifier Intervention & Prestation',
+        icon: 'revert',
+        path: ''
+      },
+    ]
+  },
 ];

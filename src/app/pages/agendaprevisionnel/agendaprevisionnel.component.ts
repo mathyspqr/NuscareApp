@@ -739,14 +739,14 @@ export class AgendaprevisionnelComponent implements OnInit {
         ],
       };
   
-      // this.nurscareService.sendInvoice(contenudumail).subscribe(
-      //   (response) => {
-      //     console.log('Envoi du mail au client', response);
-      //   },
-      //   (error) => {
-      //     console.error("Erreur lors de l'envoi du mail", error);
-      //   }
-      // );
+      this.nurscareService.sendInvoice(contenudumail).subscribe(
+        (response) => {
+          console.log('Envoi du mail au client', response);
+        },
+        (error) => {
+          console.error("Erreur lors de l'envoi du mail", error);
+        }
+      );
     }
   }
   
