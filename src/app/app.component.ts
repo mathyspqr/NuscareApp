@@ -1,6 +1,8 @@
 import { Component, HostBinding } from '@angular/core';
 import { AuthService, ScreenService, AppInfoService } from './shared/services';
 import { ThemeService } from './shared/services/theme.service';
+import * as frMessage from "devextreme/localization/messages/fr.json";
+import { locale, loadMessages } from "devextreme/localization";
 
 @Component({
   selector: 'app-root',
@@ -12,7 +14,10 @@ export class AppComponent  {
     return Object.keys(this.screen.sizes).filter(cl => this.screen.sizes[cl]).join(' ');
   }
 
-  constructor(private themeService: ThemeService, private authService: AuthService, private screen: ScreenService, public appInfo: AppInfoService) { }
+  constructor(private themeService: ThemeService, private authService: AuthService, private screen: ScreenService, public appInfo: AppInfoService) { 
+    loadMessages(frMessage);
+    locale(navigator.language);
+  }
 
   isAuthenticated() {
     return this.authService.loggedIn;

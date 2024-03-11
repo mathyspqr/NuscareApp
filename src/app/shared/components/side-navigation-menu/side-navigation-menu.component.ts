@@ -57,7 +57,7 @@ export class SideNavigationMenuComponent
   get items() {
     if (!this._items && this.idRole) {
       console.log('Current User Role ID:', this.idRole);
-  
+    
       if (this.idRole === 1) {
         // Si l'idRole est égal à 1, afficher uniquement la catégorie "Outils" avec la sous-catégorie "Profile"
         this._items = navigation
@@ -87,9 +87,11 @@ export class SideNavigationMenuComponent
               return {
                 ...item,
                 items: item.items?.filter((subItem) => {
-                  return !(subItem.text === 'Administration');
+                  return !(subItem.text === 'Outilsdesecretaire');
                 }),
               };
+            } else if (item.text === 'Outils des secretaires' && this.idRole !== 3) {
+              return null; 
             } else if (item.text === 'Administration' && this.idRole !== 2) {
               return null;
             } else {
@@ -107,7 +109,6 @@ export class SideNavigationMenuComponent
     }
     return this._items;
   }
-  
   
   
 
