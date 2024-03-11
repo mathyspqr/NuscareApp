@@ -1,0 +1,81 @@
+<p>creationintervention works!</p>
+<!-- POPUP POUR SECRETAIRE CREER INTERVENTION/PRESTATION -->
+
+    <dx-form [formData]="interventionForm">
+      <dxi-item itemType="group" cssClass="form-group" [colCount]="2">
+        <dxi-item
+          dataField="text"
+          editorType="dxTextBox"
+          [editorOptions]="{
+            placeholder:'Intitulé de lintervention',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="startDate"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            placeholder:'Début de lintervention',
+            width: '100%',
+            type: 'datetime',
+            displayFormat: 'yyyy-MM-dd HH:mm',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="endDate"
+          editorType="dxDateBox"
+          [editorOptions]="{
+            placeholder:'Fin de lintervention',
+            width: '100%',
+            type: 'datetime',
+            displayFormat: 'yyyy-MM-dd HH:mm',
+          }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="id_patient"
+          editorType="dxSelectBox"
+          [editorOptions]="{
+          dataSource: patients,
+          valueExpr: 'id_patient',
+          displayExpr: 'nomPrenom',
+          placeholder: 'Sélectionner un patient',
+          width: '100%',
+          searchEnabled: true,
+        }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="id_personnel"
+          editorType="dxSelectBox"
+          [editorOptions]="{
+      dataSource: soignants,
+      valueExpr: 'id_personnel',
+      displayExpr: 'nomPrenom',
+      placeholder: 'Sélectionner un soignant',
+      width: '100%',
+      searchEnabled: true,
+    }"
+        ></dxi-item>
+
+        <dxi-item
+          dataField="id_prestations"
+          editorType="dxTagBox"
+          [editorOptions]="{
+          dataSource: prestationsall,
+          valueExpr: 'id_prestation',
+          displayExpr: 'libelle_prestation',
+          placeholder: 'Sélectionner des prestations',
+          width: '100%',
+          searchEnabled: true,
+          showSelectionControls: true,
+          multiline: true,
+        }"
+        ></dxi-item>
+      </dxi-item>
+    </dx-form>
+
+    <div style="text-align: center; margin-top: 20px">
+      <dx-button icon="floppy" (click)="onSubmit($event)"></dx-button>
+    </div>

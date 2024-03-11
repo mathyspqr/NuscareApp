@@ -12,6 +12,8 @@ import { DxDataGridModule, DxFormModule, DxTagBoxModule, DxTextBoxModule } from 
 import { DxButtonModule } from 'devextreme-angular';
 import { NurscareService } from '../app/shared/services/nuscare.service'; 
 import { DashboardComponent } from './pages/administration/dashboard/dashboard.component';
+import { EditioninterventionComponent } from './pages/editionintervention/editionintervention.component';
+import { CreationinterventionComponent } from './pages/creationintervention/creationintervention.component';
 
 const routes: Routes = [
   {
@@ -37,6 +39,16 @@ const routes: Routes = [
   {
     path: 'agenda',
     component: AgendaprevisionnelComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'editionintervention',
+    component: EditioninterventionComponent,
+    canActivate: [ AuthGuardService ]
+  },
+  {
+    path: 'creationintervention',
+    component: CreationinterventionComponent,
     canActivate: [ AuthGuardService ]
   },
   {

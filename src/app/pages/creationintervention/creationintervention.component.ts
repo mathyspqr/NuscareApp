@@ -9,11 +9,12 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
 @Component({
-  selector: 'app-agendaprevisionnel',
-  templateUrl: './agendaprevisionnel.component.html',
-  styleUrls: ['./agendaprevisionnel.component.scss'],
+  selector: 'app-creationintervention',
+  templateUrl: './creationintervention.component.html',
+  styleUrl: './creationintervention.component.scss'
 })
-export class AgendaprevisionnelComponent implements OnInit {
+
+export class CreationinterventionComponent {
   agendasPrevisionnels: any[] = [];
   agendasPrevisionnels2: any[] = [];
   prestations: any[] = [];
@@ -808,6 +809,11 @@ export class AgendaprevisionnelComponent implements OnInit {
 
     console.log('Filtered Interventions for Today', filteredInterventions);
 
+    if (filteredInterventions.length < 2) {
+      notify('Il faut minimum 2 interventions dans la journée');
+      return;
+    }
+
     let patientsadresse = filteredInterventions.map(
       (intervention) => intervention.id_patient
     );
@@ -823,8 +829,6 @@ export class AgendaprevisionnelComponent implements OnInit {
         let adresseInfo = this.filteredUsers.map(
           (user: any) => user.adresse_patient
         );
-        const fixedAddress = "6 Rue Ampère, 31670 Labège";
-        adresseInfo.push(fixedAddress)
         console.log('Info Patients adresse', adresseInfo);
 
         let randomStartingPoint = this.generateRandomParisAddress();
@@ -860,7 +864,8 @@ export class AgendaprevisionnelComponent implements OnInit {
       '1 Rue de Rivoli, 75001 Paris',
       '15 Avenue des Champs-Élysées, 75008 Paris',
       '10 Rue du Faubourg Saint-Honoré, 75008 Paris',
-      ];
+    ];
+
     const randomIndex = Math.floor(Math.random() * parisAddresses.length);
     return parisAddresses[randomIndex];
   }

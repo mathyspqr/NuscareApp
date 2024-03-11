@@ -42,18 +42,18 @@ export const navigation = [
     ]
   },
   {
-    text: 'Outils de secretaire',
+    text: 'Outils des secretaires',
     icon: 'like',
     items: [
       {
         text: 'Créer des interventions',
         icon: 'event',
-        path: ''
+        path: 'creationintervention'
       },
       {
         text: 'Modifier Intervention & Prestation',
         icon: 'revert',
-        path: ''
+        path: 'editionintervention'
       },
     ]
   },

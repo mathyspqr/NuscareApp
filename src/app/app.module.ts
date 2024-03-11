@@ -19,6 +19,8 @@ import { DxiSeriesModule, DxiToolbarItemModule, DxoDetailsModule, DxoMasterDetai
 import { PatientComponent } from './pages/patient/patient.component';
 import { AgendaprevisionnelComponent } from './pages/agendaprevisionnel/agendaprevisionnel.component';
 import { DashboardComponent } from './pages/administration/dashboard/dashboard.component';
+import { EditioninterventionComponent } from './pages/editionintervention/editionintervention.component';
+import { CreationinterventionComponent } from './pages/creationintervention/creationintervention.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { DashboardComponent } from './pages/administration/dashboard/dashboard.c
     PatientComponent,
     AdministrationComponent,
     AgendaprevisionnelComponent,
-    DashboardComponent
+    DashboardComponent,
+    EditioninterventionComponent,
+    CreationinterventionComponent,
   ],
   imports: [
     BrowserModule,
